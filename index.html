@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HBD SIS - 17</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Syne:wght@400;700;800&family=Righteous&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-pink: #ff00ff;
+            --acid-green: #ccff00;
+            --deep-purple: #4d00ff;
+            --soft-cream: #fdfbf7;
+            --text-main: #1a1a1a;
+            --card-bg: #ffffff;
+        }
+
+        /* Themes */
+        [data-theme="dark"] {
+            --neon-pink: #ff00ff;
+            --acid-green: #00ff9d;
+            --deep-purple: #9d00ff;
+            --soft-cream: #121212;
+            --text-main: #ffffff;
+            --card-bg: #1e1e1e;
+        }
+
+        [data-theme="retro"] {
+            --neon-pink: #ff6b6b;
+            --acid-green: #4ecdc4;
+            --deep-purple: #ffe66d;
+            --soft-cream: #f7fff7;
+            --text-main: #292f36;
+            --card-bg: #ffffff;
+        }
+
+        /* NEW: Level 17 Unlocked Theme (Gold & Dark) */
+        [data-theme="level17"] {
+            --neon-pink: #ff0055;
+            --acid-green: #ffd700; /* Gold */
+            --deep-purple: #7b2cbf;
+            --soft-cream: #111111;
+            --text-main: #ffffff;
+            --card-bg: #222222;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--soft-cream);
+            color: var(--text-main);
+            overflow-x: hidden;
+            cursor: crosshair;
+            transition: background-color 0.5s ease, color 0.5s ease;
+            user-select: none;
+            touch-action: manipulation; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        p, h1, h2, h3, input { user-select: text; }
+        h1, h2, h3, .display-font { font-family: 'Syne', sans-serif; }
+        .font-name { font-family: 'Righteous', cursive; letter-spacing: 0.05em; }
+        .handwritten-font { font-family: 'Patrick Hand', cursive; }
+
+        html { scroll-behavior: smooth; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: var(--soft-cream); border-left: 2px solid var(--text-main); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-pink); border: 2px solid var(--text-main); border-radius: 20px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--deep-purple); }
+
+        /* Shadows & Cards */
+        .brutal-shadow {
+            box-shadow: 4px 4px 0px 0px var(--text-main);
+            transition: all 0.2s ease;
+            border: 3px solid var(--text-main);
+        }
+        @media (min-width: 768px) {
+            .brutal-shadow { box-shadow: 6px 6px 0px 0px var(--text-main); }
+        }
+        .brutal-shadow:hover {
+            box-shadow: 2px 2px 0px 0px var(--text-main);
+            transform: translate(2px, 2px);
+        }
+        .brutal-card {
+            border: 3px solid var(--text-main);
+            box-shadow: 6px 6px 0px 0px var(--text-main);
+            background: var(--card-bg);
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+        @media (min-width: 768px) {
+            .brutal-card { box-shadow: 8px 8px 0px 0px var(--text-main); }
+        }
+
+        /* Animations */
+        .marquee-container { overflow: hidden; white-space: nowrap; position: relative; }
+        .marquee-content { display: inline-block; animation: marquee 15s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        .float { animation: float 6s ease-in-out infinite; }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, var(--deep-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 90; opacity: 0.05;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAA5OTkAAABMTExERERmZmazs7OIiIh5wA87AAAACHRSTlMAMwA3M2YzM2Y3M3MAAAABYktHRACIBR1IAAAAJUlEQVQ4y2NgQQMgAAJDASjDAAjAAJAhDCMIBBwYBhEIBgYhCAAAq4AETP6l5WwAAAAASUVORK5CYII=');
+        }
+
+        /* Stickers */
+        .sticker { position: absolute; z-index: 20; cursor: grab; user-select: none; touch-action: none; }
+        .sticker:active { cursor: grabbing; }
+
+        .stamped-sticker {
+            position: absolute; z-index: 5; pointer-events: none;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { 0% { transform: scale(0) rotate(0deg); } 100% { transform: scale(1) rotate(var(--rotation)); } }
+
+        /* Flip Cards */
+        .flip-container { perspective: 1000px; cursor: pointer; }
+        .flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flip-container.flipped .flip-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 0.75rem; border: 2px solid var(--text-main); overflow: hidden;
+        }
+        .flip-back {
+            background-color: var(--acid-green); color: var(--text-main); transform: rotateY(180deg);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem;
+        }
+
+        /* Hype Particles */
+        .hype-particle {
+            position: fixed; pointer-events: none; animation: floatUp 1s ease-out forwards;
+            font-size: 1.5rem; z-index: 50;
+        }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+
+        /* Background Blobs */
+        .blob { position: absolute; filter: blur(80px); z-index: -1; opacity: 0.6; }
+        .animation-delay-2000 { animation-delay: 2s; }
+
+        /* Cursor */
+        @media (hover: none) { .cursor-dot { display: none !important; } }
+        .cursor-dot {
+            width: 20px; height: 20px; background-color: var(--neon-pink); position: fixed; border-radius: 50%;
+            pointer-events: none; z-index: 9999; animation: fadeOut 1s forwards; mix-blend-mode: exclusion;
+        }
+        @keyframes fadeOut { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
+        
+        /* Mobile Menu */
+        #mobile-menu { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+        #mobile-menu.open { max-height: 300px; opacity: 1; }
+
+        .shake-screen { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+
+        /* Video Intro Styles */
+        #video-intro-overlay { transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1); }
+        #video-intro-overlay.slide-up { transform: translateY(-100%); }
+
+        /* Music Player Animations */
+        .music-disc { animation: spin 3s linear infinite; animation-play-state: paused; transition: transform 0.5s ease; }
+        .music-disc.playing { animation-play-state: running; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .equalizer-bar { width: 4px; background: var(--neon-pink); animation: equalize 0.8s ease-in-out infinite; animation-play-state: paused; }
+        .equalizer-bar.playing { animation-play-state: running; }
+        @keyframes equalize { 0%, 100% { height: 20%; } 50% { height: 100%; } }
+        
+        .playlist-overlay { transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 40; }
+        .playlist-overlay.active { transform: translateY(0); }
+        .track-item { cursor: pointer; transition: all 0.2s; border-left: 2px solid transparent; }
+        .track-item:hover { background: rgba(255, 255, 255, 0.1); padding-left: 0.5rem; }
+        .track-item.active { color: #39ff14; border-left-color: #39ff14; padding-left: 0.5rem; background: rgba(57, 255, 20, 0.1); }
+        
+        .holo-cd {
+            background: radial-gradient(circle, #111 10%, transparent 11%), conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+            border-radius: 50%; position: relative; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        .holo-cd::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 2px, transparent 2px, transparent 4px); }
+        .holo-cd::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%, rgba(255,255,255,0.1) 100%); pointer-events: none; mix-blend-mode: overlay; }
+        
+        .player-lcd { background-color: #1a202c; color: #39ff14; font-family: 'Courier New', monospace; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); border: 2px solid #333; }
+        .visualizer-bar-cool { width: 4px; background: #39ff14; animation: bounce 0.5s infinite ease-in-out alternate; animation-play-state: paused; }
+        .visualizer-bar-cool.playing { animation-play-state: running; }
+        @keyframes bounce { 0% { height: 20%; opacity: 0.5; } 100% { height: 100%; opacity: 1; } }
+
+        /* Glitch Text */
+        .glitch-text { position: relative; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: textShaking 0.3s infinite; }
+        @keyframes textShaking { 0% { text-shadow: -2px 0 var(--neon-pink); } 50% { text-shadow: 2px 0 var(--deep-purple); } 100% { text-shadow: -2px 0 var(--neon-pink); } }
+
+        /* Double Tap Heart Animation */
+        @keyframes like-heart-pop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            30% { transform: translate(-50%, -50%) scale(0.9); }
+            45% { transform: translate(-50%, -50%) scale(1.1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -150%) scale(0.8); }
+        }
+        .animate-like { animation: like-heart-pop 0.8s ease-out forwards; }
+
+        /* Slay Report Styles */
+        .striped-bg { background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent); background-size: 1rem 1rem; }
+        .slay-item.checked .checkbox-box { background-color: var(--acid-green); border-color: black; }
+        .slay-item.checked i { opacity: 1; }
+        .slay-item.checked .status-badge { background-color: var(--neon-pink); color: white; border-color: black; }
+        .stamp-animation { animation: stamp-slam 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes stamp-slam { 0% { opacity: 0; transform: scale(3) rotate(-20deg); } 100% { opacity: 1; transform: scale(1) rotate(-12deg); } }
+
+        /* Tic-Tac-Toe Styles */
+        .ttt-cell { background: rgba(0,0,0,0.05); border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.2s; user-select: none; }
+        .ttt-cell:hover { background: rgba(0,0,0,0.1); }
+        .ttt-cell.x { color: var(--neon-pink); }
+        .ttt-cell.o { color: var(--deep-purple); }
+
+        /* Slideshow Animation */
+        @keyframes simple-fade { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
+
+        /* --- E-CARD Styles --- */
+        @keyframes letterDrop { 0% { transform: translateY(-100px) rotate(-20deg); opacity: 0; } 60% { transform: translateY(10px) rotate(10deg); opacity: 1; } 100% { transform: translateY(0) rotate(0); opacity: 1; } }
+        .anim-letter { display: inline-block; opacity: 0; animation: letterDrop 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        .sway-balloon { animation: swayBalloon 4s ease-in-out infinite; transform-origin: bottom center; }
+        @keyframes swayBalloon { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+        .twinkle-star { animation: twinkle 2s infinite alternate; }
+        @keyframes twinkle { 0% { opacity: 0.3; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2) rotate(45deg); } }
+        .slide-hat { animation: hatIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; opacity: 0; }
+        @keyframes hatIn { 0% { transform: translate(-50px, -50px) rotate(-45deg); opacity: 0; } 100% { transform: translate(0, 0) rotate(-15deg); opacity: 1; } }
+        .rotating-text-wrapper { animation: rotateText 10s linear infinite; }
+        @keyframes rotateText { 100% { transform: rotate(360deg); } }
+        .cursor-blink { display: inline-block; width: 2px; height: 1.2em; background-color: black; animation: blink 1s step-end infinite; vertical-align: middle; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* Envelope Styles */
+        .envelope-wrapper { position: relative; cursor: pointer; transition: transform 0.3s; }
+        .envelope-wrapper:hover { transform: scale(1.02); }
+        .envelope-wrapper.open { transform: translateY(100px); cursor: default; }
+        .envelope { position: relative; width: 300px; height: 200px; background: #ff85a2; border-radius: 0 0 10px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 10; }
+        .envelope::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 150px solid transparent; border-right: 150px solid transparent; border-top: 100px solid #ff5c8d; transform-origin: top; transition: transform 0.6s 0.4s, z-index 0.2s 0.4s; z-index: 30; }
+        .envelope::after { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 150px solid #ff9db6; border-right: 150px solid #ffb3c6; border-bottom: 100px solid #ff85a2; border-top: 100px solid transparent; border-radius: 0 0 10px 10px; z-index: 20; }
+        .envelope-wrapper.open .envelope::before { transform: rotateX(180deg); z-index: 0; }
+        .letter { position: absolute; top: 10px; left: 15px; width: 270px; height: 350px; background: #fff9c4; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.6s 0.8s, z-index 0.1s 0.8s; z-index: 5; display: flex; flex-direction: column; overflow-y: auto; }
+        .envelope-wrapper.open .letter { transform: translateY(-250px); z-index: 40; height: auto; min-height: 400px; }
+        .seal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -80%); width: 40px; height: 40px; background: #d32f2f; border-radius: 50%; z-index: 40; box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.8); font-weight: bold; font-family: serif; border: 2px solid rgba(0,0,0,0.1); transition: opacity 0.4s; }
+        .envelope-wrapper.open .seal { opacity: 0; pointer-events: none; }
+    </style>
+</head>
+<body class="relative min-h-screen overflow-hidden" id="body">
+
+    <!-- VIDEO INTRO OVERLAY -->
+    <div id="video-intro-overlay" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center">
+        <!-- Video Background -->
+        <video id="intro-video" class="absolute inset-0 w-full h-full object-cover opacity-60" autoplay muted loop playsinline>
+            <source src="Website-intro2_hd.mp4" type="video/mp4">
+            <!-- Fallback if video fails -->
+            <div class="w-full h-full bg-gradient-to-br from-purple-900 to-black"></div>
+        </video>
+
+        <!-- Content on top of video -->
+        <div class="relative z-10 flex flex-col items-center gap-6 p-4 w-full max-w-4xl text-center">
+            
+            <!-- Warning Badge -->
+            <div class="bg-[var(--acid-green)] text-black font-mono font-bold px-4 py-1 rounded-full border-2 border-black rotate-2 animate-pulse shadow-[4px_4px_0_white]">
+                ⚠️ WARNING: EXTREME SLAY AHEAD
+            </div>
+
+            <!-- New Button Style -->
+            <button id="enter-party-btn" class="mt-32 group relative inline-block focus:outline-none focus:ring">
+                <span class="absolute inset-0 translate-x-2 translate-y-2 bg-[var(--acid-green)] transition-transform group-hover:translate-x-0 group-hover:translate-y-0"></span>
+                <span class="relative inline-block border-4 border-black bg-[var(--neon-pink)] px-8 py-4 text-xl md:text-3xl font-black uppercase tracking-widest text-white group-active:text-opacity-75">
+                    UNLOCK WORLD 🔓
+                </span>
+            </button>
+            
+            <p class="text-white/80 font-mono text-[10px] md:text-xs uppercase tracking-[0.2em] mt-6 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+                Tap to Enter • Volume Up 🔊
+            </p>
+        </div>
+    </div>
+
+    <!-- Noise Texture Overlay -->
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 border-b-4 border-black bg-white/95 backdrop-blur-sm transition-colors duration-500" style="border-color: var(--text-main); background-color: var(--card-bg);">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="text-xl md:text-2xl font-black italic tracking-tighter hover:text-pink-600 transition-colors cursor-pointer select-none" onclick="scrambleTitle()">
+                    BDAY.GIRL_v17
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex gap-8 font-bold text-lg items-center">
+                    <a href="#memories" class="hover:underline decoration-4 decoration-pink-500 underline-offset-4">Memories</a>
+                    <a href="#vibe-machine" class="hover:underline decoration-4 decoration-blue-500 underline-offset-4">Desi Vibe Check</a>
+                    <button onclick="switchTheme()" class="hover:underline decoration-4 decoration-purple-600 underline-offset-4 flex items-center gap-2">
+                        <i data-lucide="palette" class="w-4 h-4"></i> Switch Vibe
+                    </button>
+                    <button onclick="triggerConfetti()" aria-label="Celebrate" class="brutal-shadow bg-[var(--acid-green)] text-[var(--text-main)] px-6 py-2 font-bold border-2 border-[var(--text-main)] rounded-full hover:bg-[var(--text-main)] hover:text-[var(--acid-green)] transition-all">
+                        CELEBRATE 🎉
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button & Celebrate (Compact) -->
+                <div class="flex items-center gap-2 md:hidden">
+                    <button onclick="triggerConfetti()" class="brutal-shadow bg-[var(--acid-green)] text-[var(--text-main)] px-3 py-1 font-bold border-2 border-[var(--text-main)] rounded-full text-sm">
+                        🎉
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="p-2 border-2 border-[var(--text-main)] rounded bg-[var(--card-bg)]">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Dropdown -->
+            <div id="mobile-menu" class="md:hidden flex flex-col gap-4 pt-4 pb-2 text-center font-bold border-t-2 border-dashed border-[var(--text-main)] mt-3">
+                <a href="#memories" class="py-2 hover:bg-[var(--acid-green)] rounded transition-colors" onclick="toggleMobileMenu()">Memories</a>
+                <a href="#vibe-machine" class="py-2 hover:bg-[var(--acid-green)] rounded transition-colors" onclick="toggleMobileMenu()">Desi Vibe Check</a>
+                <button onclick="switchTheme()" class="py-2 flex items-center justify-center gap-2 hover:bg-[var(--acid-green)] rounded transition-colors">
+                    <i data-lucide="palette" class="w-4 h-4"></i> Switch Vibe
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-28 pb-10 px-4 min-h-[90vh] flex flex-col justify-center items-center relative overflow-hidden">
+        <div class="text-center relative z-10 w-full max-w-4xl">
+            <div class="inline-block bg-[var(--text-main)] text-[var(--acid-green)] px-4 py-1 font-mono mb-4 rounded-full border-2 border-dashed border-[var(--acid-green)] text-sm md:text-base">
+                EST. 2009
+            </div>
+            <h1 id="main-title" class="text-5xl sm:text-7xl md:text-9xl font-extrabold tracking-tighter leading-none mb-4 cursor-pointer hover:scale-105 transition-transform select-none" onclick="scrambleTitle()">
+                HAPPY<br>
+                <span class="gradient-text">BIRTHDAY</span><br>
+                <span class="font-name text-[var(--text-main)] drop-shadow-[4px_4px_0_var(--acid-green)]">ADITI!</span>
+            </h1>
+            <!-- UPDATED: Interactive Level 17 Button -->
+            <button onclick="toggleLevel17Theme()" class="text-lg md:text-3xl font-bold italic bg-[var(--acid-green)] text-[var(--text-main)] inline-block px-6 py-3 border-4 border-[var(--text-main)] transform -rotate-2 mt-4 brutal-shadow hover:scale-110 hover:rotate-2 transition-all cursor-pointer shadow-[4px_4px_0_var(--text-main)]" title="Click to Switch Mode!">
+                LEVEL 17 UNLOCKED 🔓
+            </button>
+        </div>
+
+        <!-- Marquee -->
+        <div class="absolute bottom-0 left-0 w-full bg-[var(--text-main)] text-[var(--acid-green)] border-y-4 border-[var(--text-main)] py-2 md:py-4 transform rotate-1 md:rotate-2 scale-105">
+            <div class="marquee-container">
+                <div class="marquee-content font-mono font-bold text-lg md:text-2xl">
+                    ★ HAPPY BIRTHDAY ★ QUEEN OF GEN Z ★ 17 YEARS OF SLAYING ★ NO CAP, YOU'RE THE BEST ★ MAIN CHARACTER VIBES ONLY ★ HAPPY BIRTHDAY ★ QUEEN OF GEN Z ★ 17 YEARS OF SLAYING ★ NO CAP, YOU'RE THE BEST ★ MAIN CHARACTER VIBES ONLY
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Bento Grid Section (Core Memories) -->
+    <section id="memories" class="py-12 md:py-20 px-4 max-w-7xl mx-auto">
+        <h2 class="text-4xl md:text-7xl font-bold mb-8 md:mb-12 text-center">CORE <span class="text-[var(--neon-pink)] italic">MEMORIES</span></h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-3 gap-6 h-auto md:h-[800px]">
+            <!-- Large Item (Fixed Transition) -->
+            <div class="md:col-span-2 md:row-span-2 brutal-card rounded-2xl p-0 relative group h-80 md:h-full">
+                <div class="flip-container h-full w-full" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-inner h-full w-full">
+                        <div class="flip-front bg-gray-200">
+                             <div class="absolute top-4 left-4 z-10 bg-white border-2 border-black px-3 py-1 font-bold rounded-full text-black text-sm">
+                                📸 Tap to Flip
+                            </div>
+                            <!-- Removed grayscale classes for a clean look -->
+                            <img src="Gemini_Generated_Image_2.png" class="w-full h-full object-cover" alt="Fit Check">
+                        </div>
+                        <div class="flip-back">
+                            <h3 class="text-2xl md:text-4xl font-black mb-2">THE FIT CHECK</h3>
+                            <p class="font-mono text-base md:text-lg">Remember this day? You spent 3 hours getting ready. Worth it though. 💅</p>
+                            <span class="mt-4 border-2 border-black px-3 py-1 rounded-full text-xs md:text-sm">3 Feb 2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quote Item -->
+            <div class="md:col-span-1 md:row-span-1 bg-[var(--neon-pink)] brutal-card rounded-2xl p-6 flex items-center justify-center transform hover:rotate-2 transition-transform cursor-pointer active:scale-95 h-48 md:h-full">
+                <p class="text-white font-black text-3xl text-center leading-tight">"STAY<br>WILD<br>SIS"</p>
+            </div>
+
+            <!-- Playlist Item (Cyber) -->
+            <div class="md:col-span-1 md:row-span-2 brutal-card rounded-3xl p-6 flex flex-col justify-between bg-zinc-900 h-auto md:h-full relative overflow-hidden border-4 border-white shadow-[8px_8px_0_var(--acid-green)] group">
+                <!-- Background Noise/Texture -->
+                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/stardust.png');"></div>
+
+                <!-- Hidden Audio Element -->
+                <audio id="birthday-audio" preload="metadata"></audio>
+                
+                <!-- Top: Status Bar -->
+                <div class="flex justify-between items-center mb-4 z-20 relative">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse box-shadow-[0_0_8px_red]"></div>
+                        <span class="text-white font-mono text-xs tracking-widest">LIVE MIX</span>
+                    </div>
+                    <div class="flex gap-1">
+                         <span class="w-1 h-3 bg-white/20 rounded-full"></span>
+                         <span class="w-1 h-4 bg-white/40 rounded-full"></span>
+                         <span class="w-1 h-3 bg-white/60 rounded-full"></span>
+                         <span class="w-1 h-5 bg-[var(--acid-green)] rounded-full"></span>
+                    </div>
+                </div>
+
+                <!-- Middle: Holographic CD (Relative for overlay) -->
+                <div class="relative flex justify-center items-center py-2 z-10 flex-grow overflow-hidden">
+                    <!-- The CD -->
+                    <div id="music-disc" class="holo-cd w-40 h-40 md:w-48 md:h-48 music-disc border-4 border-white/10 flex items-center justify-center transition-all duration-300 rounded-full bg-black">
+                         <!-- Cover Art Center -->
+                         <div class="absolute inset-12 bg-cover bg-center rounded-full border-4 border-black" style="background-image: url('https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=300&auto=format&fit=crop');"></div>
+                         <div class="absolute inset-[42%] bg-black rounded-full border-2 border-white/50 z-20"></div>
+                    </div>
+                    
+                    <!-- Playlist Overlay (Hidden by default) -->
+                    <div id="playlist-view" class="playlist-overlay absolute inset-0 bg-black/95 backdrop-blur-md rounded-xl p-4 overflow-y-auto border border-white/10 z-30">
+                        <div class="flex justify-between items-center mb-3 sticky top-0 bg-black/95 pb-2 border-b border-white/10 z-10">
+                             <h4 class="text-[var(--acid-green)] font-mono font-bold text-xs">TRACKLIST_V17</h4>
+                             <button onclick="togglePlaylist()" class="text-white hover:text-red-500"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        </div>
+                        <div id="playlist-tracks" class="flex flex-col gap-2 text-white font-mono text-xs pb-10">
+                            <!-- Tracks injected by JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Notes -->
+                    <i data-lucide="music" class="absolute top-4 right-2 text-[var(--neon-pink)] w-6 h-6 animate-bounce" style="animation-delay: 0.2s"></i>
+                    <i data-lucide="music-2" class="absolute bottom-4 left-2 text-[var(--acid-green)] w-8 h-8 animate-bounce" style="animation-delay: 0.5s"></i>
+                </div>
+
+                <!-- Bottom: Controls & LCD -->
+                <div class="z-20 mt-auto relative">
+                    <!-- LCD Display -->
+                    <div class="bg-[#1a202c] p-3 rounded-lg mb-4 relative overflow-hidden border-2 border-[#333] shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]">
+                         <!-- Scanning line -->
+                         <div class="absolute top-0 left-0 w-full h-1 bg-white/10 animate-[scan_2s_linear_infinite]"></div>
+                         
+                         <div class="flex justify-between items-end mb-2">
+                             <div class="overflow-hidden whitespace-nowrap w-2/3">
+                                 <div id="player-marquee" class="animate-[marquee_8s_linear_infinite] inline-block font-bold text-[#39ff14] font-mono whitespace-nowrap">
+                                     SELECT A TRACK TO START...
+                                 </div>
+                             </div>
+                             <div class="flex gap-1 h-4 items-end" id="equalizer-cool">
+                                <div class="visualizer-bar-cool rounded-t-sm" style="animation-delay: 0s"></div>
+                                <div class="visualizer-bar-cool rounded-t-sm" style="animation-delay: 0.1s"></div>
+                                <div class="visualizer-bar-cool rounded-t-sm" style="animation-delay: 0.2s"></div>
+                                <div class="visualizer-bar-cool rounded-t-sm" style="animation-delay: 0.3s"></div>
+                             </div>
+                         </div>
+                         
+                         <div class="flex justify-between text-[10px] opacity-80 mb-1 text-[#39ff14] font-mono">
+                             <span id="curr-time">0:00</span>
+                             <span id="dur-time">--:--</span>
+                         </div>
+                         
+                         <!-- Progress Line -->
+                         <div class="h-1.5 bg-white/20 w-full rounded-full cursor-pointer relative group" id="progress-container">
+                             <div id="progress-bar" class="h-full bg-[#39ff14] w-0 relative transition-all duration-100 ease-linear">
+                                 <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_8px_#39ff14] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                             </div>
+                         </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-between items-center px-2">
+                        <!-- Repeat Button -->
+                        <button onclick="toggleRepeat(this)" class="text-white/50 hover:text-white transition-colors" id="btn-repeat"><i data-lucide="repeat" class="w-5 h-5"></i></button>
+                        
+                        <div class="flex items-center gap-4">
+                            <!-- Prev -->
+                            <button onclick="prevTrack()" class="text-white hover:text-[var(--acid-green)] transition-colors active:scale-90"><i data-lucide="skip-back" class="w-8 h-8 fill-current"></i></button>
+                            
+                            <!-- Play/Pause -->
+                            <button onclick="toggleMusic()" class="bg-white text-black w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 hover:bg-[var(--neon-pink)] hover:text-white transition-all shadow-[0_0_15px_rgba(255,255,255,0.5)] active:scale-95">
+                                <span id="icon-play"><i data-lucide="play" class="w-6 h-6 fill-current ml-1"></i></span>
+                                <span id="icon-pause" class="hidden"><i data-lucide="pause" class="w-6 h-6 fill-current"></i></span>
+                            </button>
+                            
+                            <!-- Next -->
+                            <button onclick="nextTrack()" class="text-white hover:text-[var(--acid-green)] transition-colors active:scale-90"><i data-lucide="skip-forward" class="w-8 h-8 fill-current"></i></button>
+                        </div>
+                        
+                        <!-- Playlist Toggle Button -->
+                        <button onclick="togglePlaylist()" class="text-white/50 hover:text-[var(--acid-green)] transition-colors relative" id="btn-playlist">
+                            <i data-lucide="list-music" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tall Photo -->
+            <div class="md:col-span-1 md:row-span-2 brutal-card rounded-2xl p-0 h-64 md:h-full">
+                <div class="flip-container h-full w-full" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-inner h-full w-full">
+                        <!-- Front: Image 1 & 3 Slideshow -->
+                        <div class="flip-front relative">
+                            <!-- Base Image (Image 1) -->
+                            <img src="Gemini_Generated_Image_1.png" class="w-full h-full object-cover absolute inset-0" alt="Sister Photo 1">
+                            <!-- Overlay Image (Image 3) with fade animation -->
+                            <img src="Gemini_Generated_Image_3.png" class="w-full h-full object-cover absolute inset-0" style="animation: simple-fade 4s infinite;" alt="Sister Photo 3">
+                            
+                            <div class="absolute bottom-4 left-0 w-full text-center z-10">
+                                <span class="bg-[var(--acid-green)] text-black px-2 border border-black font-bold text-xs transform -rotate-3 inline-block">TAP TO FLIP ➜</span>
+                            </div>
+                        </div>
+                        <!-- Back: Image 2 (Image 4) -->
+                        <div class="flip-back p-0">
+                            <img src="Gemini_Generated_Image_4.png" class="w-full h-full object-cover" alt="Sister Photo 2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticker Dump -->
+            <div class="md:col-span-1 md:row-span-1 bg-[var(--acid-green)] brutal-card rounded-2xl p-4 flex flex-wrap gap-2 items-center justify-center overflow-hidden relative cursor-pointer active:scale-95 transition-transform h-48 md:h-full" onclick="triggerConfetti()">
+                <i data-lucide="heart" class="w-10 h-10 fill-[var(--neon-pink)] absolute top-2 left-2 animate-bounce"></i>
+                <i data-lucide="star" class="w-12 h-12 fill-[var(--deep-purple)] absolute bottom-4 right-4 animate-spin-slow"></i>
+                <span class="font-black text-2xl z-10 border-4 border-black bg-white text-black px-2 py-1 rotate-12">100%</span>
+            </div>
+            
+             <!-- NEW: Tic-Tac-Toe Game (Replaces Hype Meter) -->
+             <div class="md:col-span-2 md:row-span-1 bg-[var(--card-bg)] brutal-card rounded-2xl p-4 flex flex-col relative overflow-hidden h-64 md:h-full border-4 border-[var(--text-main)]">
+                <div class="flex justify-between items-center mb-2 z-10">
+                    <h3 class="font-black text-xl font-mono">TIC-TAC-TOE 🎮</h3>
+                    <button onclick="resetGame()" class="text-xs font-bold font-mono bg-[var(--text-main)] text-white px-3 py-1 rounded-full hover:bg-[var(--neon-pink)] transition-colors">RESET</button>
+                </div>
+                
+                <div class="flex-grow flex items-center justify-center z-10">
+                    <div class="grid grid-cols-3 gap-2 w-full max-w-[200px] aspect-square" id="ttt-board">
+                        <!-- Cells generated by JS -->
+                    </div>
+                </div>
+                
+                <div id="ttt-status" class="text-center font-mono font-bold mt-2 text-xs opacity-60">
+                    PLAYER X's TURN
+                </div>
+                
+                <!-- Winner Overlay (Hidden by default) -->
+                <div id="ttt-overlay" class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center z-20 hidden backdrop-blur-sm">
+                    <div class="text-[var(--acid-green)] font-black text-4xl animate-bounce mb-4 font-mono text-center leading-tight" id="ttt-winner-text">X WINS!</div>
+                    <button onclick="resetGame()" class="bg-[var(--neon-pink)] text-white font-bold px-6 py-2 border-2 border-white rounded-full hover:scale-105 transition-transform font-mono shadow-[4px_4px_0_white]">PLAY AGAIN</button>
+                </div>
+
+                <!-- Decorative Background -->
+                <div class="absolute -bottom-10 -right-10 text-[var(--acid-green)] opacity-20 transform rotate-12">
+                    <i data-lucide="gamepad-2" class="w-32 h-32"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: REELS VIDEO PLAYER -->
+    <section id="reels" class="py-20 bg-[var(--soft-cream)] relative border-b-4 border-[var(--text-main)]">
+        <div class="max-w-md mx-auto px-4">
+            <h2 class="text-4xl font-black mb-8 text-center text-[var(--text-main)] uppercase tracking-tighter">HIGHLIGHT <span class="text-[var(--neon-pink)]">REEL</span> 🎥</h2>
+            
+            <!-- PORTRAIT VIDEO PLAYER CARD -->
+            <div id="video-card-container" class="aspect-[9/16] w-full brutal-card rounded-2xl p-0 relative overflow-hidden group bg-black shadow-[12px_12px_0_var(--acid-green)] border-4 border-black select-none mx-auto transform hover:scale-[1.02] transition-transform duration-300">
+                <!-- Video Element -->
+                <video id="memory-video" class="w-full h-full object-cover" loop playsinline poster="https://images.unsplash.com/photo-1616091093747-4792135a5e36?q=80&w=1000&auto=format&fit=crop">
+                    <source src="video_2026-01-27_09-15-10.mp4" type="video/mp4">
+                </video>
+                
+                <!-- Top Gradient -->
+                <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/80 to-transparent z-10 pointer-events-none"></div>
+
+                <!-- "REC" Overlay -->
+                <div class="absolute top-4 left-4 flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 z-20 pointer-events-none">
+                    <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_red]"></div>
+                    <span class="text-white text-[10px] font-mono tracking-widest drop-shadow-md">MEMORIES.MP4</span>
+                </div>
+
+                <!-- Social Side Bar -->
+                <div class="absolute right-4 bottom-24 flex flex-col gap-6 z-20 items-center">
+                    <div class="flex flex-col items-center gap-1 group/icon cursor-pointer">
+                        <div class="bg-gray-800/50 p-3 rounded-full backdrop-blur-sm group-hover/icon:bg-[var(--neon-pink)] transition-colors">
+                            <i data-lucide="heart" class="w-6 h-6 text-white fill-white/20"></i>
+                        </div>
+                        <span class="text-white text-xs font-bold" id="like-count">17k</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 group/icon cursor-pointer">
+                        <div class="bg-gray-800/50 p-3 rounded-full backdrop-blur-sm group-hover/icon:bg-[var(--acid-green)] transition-colors">
+                            <i data-lucide="message-circle" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-white text-xs font-bold">2009</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 group/icon cursor-pointer">
+                        <div class="bg-gray-800/50 p-3 rounded-full backdrop-blur-sm group-hover/icon:bg-[var(--deep-purple)] transition-colors">
+                            <i data-lucide="share-2" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-white text-xs font-bold">Share</span>
+                    </div>
+                </div>
+
+                <!-- Center Play Button -->
+                <div class="absolute inset-0 flex items-center justify-center z-10 transition-opacity duration-300 pointer-events-none" id="video-play-overlay">
+                    <div class="bg-[var(--acid-green)] text-black p-6 rounded-full border-4 border-black shadow-[0_0_20px_var(--acid-green)]">
+                        <i data-lucide="play" class="w-12 h-12 fill-current"></i>
+                    </div>
+                </div>
+
+                <!-- Double Tap Heart Container -->
+                <div id="double-tap-heart" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none opacity-0">
+                    <i data-lucide="heart" class="w-24 h-24 text-[var(--neon-pink)] fill-[var(--neon-pink)] drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]"></i>
+                </div>
+
+                <!-- Bottom Controls -->
+                <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
+                    <div class="flex justify-between items-end mb-4 text-white pr-12">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[var(--neon-pink)] to-[var(--deep-purple)] p-0.5">
+                                    <img src="https://ui-avatars.com/api/?name=Aditi&background=000&color=fff" class="w-full h-full rounded-full object-cover border border-white" alt="Profile">
+                                </div>
+                                <span class="font-bold text-sm">@birthday_queen</span>
+                            </div>
+                            <span class="font-mono text-xs opacity-90 pl-1">Living my best life ✨ #17 #Birthday</span>
+                        </div>
+                        <button onclick="toggleMute(event)" class="p-2 hover:bg-white/20 rounded-full transition-colors">
+                            <i id="vol-icon" data-lucide="volume-x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <!-- Interactive Scrubber -->
+                    <div class="h-6 bg-transparent w-full cursor-pointer flex items-center" id="video-scrubber-area">
+                        <div class="h-1.5 bg-gray-600/50 rounded-full w-full overflow-hidden pointer-events-none">
+                            <div id="video-progress" class="h-full bg-[var(--acid-green)] w-0 transition-all duration-100 shadow-[0_0_10px_var(--acid-green)]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Vibe Matcher Slot Machine (Replaces Forecast) -->
+    <section id="vibe-machine" class="py-20 bg-orange-400 border-y-4 border-[var(--text-main)] relative overflow-hidden">
+        <!-- Background Pattern (Dot/Rangoli style) -->
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#000 2px, transparent 2px); background-size: 20px 20px;"></div>
+
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <!-- Nimbu Mirchi Decoration -->
+            <div class="absolute -top-10 left-10 text-6xl animate-bounce hidden md:block select-none" title="Nazar Na Lage!">🍋🌶️</div>
+            
+            <h2 class="text-3xl md:text-6xl font-black mb-8 uppercase text-[var(--text-main)] drop-shadow-sm leading-tight">
+                LEVEL 17 <br><span class="text-white stroke-black" style="-webkit-text-stroke: 2px black;">ULTIMATE DESI VIBE CHECK</span> 🛺
+            </h2>
+            
+            <div class="bg-[var(--card-bg)] border-4 border-black p-4 md:p-8 rounded-xl shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] inline-block w-full max-w-3xl relative transform rotate-1 transition-transform hover:rotate-0">
+                
+                <!-- Decoration -->
+                <div class="absolute -top-6 -right-6 text-6xl animate-bounce hidden md:block">🎰</div>
+
+                <!-- Slot Windows Container -->
+                <div class="grid grid-cols-3 gap-2 md:gap-4 mb-6 bg-black p-2 md:p-4 rounded-lg border-4 border-black">
+                    <!-- Slot 1: Aesthetic -->
+                    <div class="slot-window bg-white h-32 md:h-48 overflow-hidden relative rounded border-2 border-gray-800 shadow-inner">
+                        <div class="absolute top-0 left-0 w-full bg-orange-100 text-[10px] font-bold py-1 border-b border-gray-200 text-gray-500">THE LOOK</div>
+                        <div class="slot-strip flex flex-col items-center w-full pt-6" id="slot-1">
+                            <!-- JS will populate -->
+                        </div>
+                        <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] pointer-events-none border-y-4 border-black/10"></div>
+                    </div>
+                    <!-- Slot 2: Era -->
+                    <div class="slot-window bg-white h-32 md:h-48 overflow-hidden relative rounded border-2 border-gray-800 shadow-inner">
+                        <div class="absolute top-0 left-0 w-full bg-purple-100 text-[10px] font-bold py-1 border-b border-gray-200 text-gray-500">THE DRAMA</div>
+                        <div class="slot-strip flex flex-col items-center w-full pt-6" id="slot-2"></div>
+                        <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] pointer-events-none border-y-4 border-black/10"></div>
+                    </div>
+                    <!-- Slot 3: Power Up -->
+                    <div class="slot-window bg-white h-32 md:h-48 overflow-hidden relative rounded border-2 border-gray-800 shadow-inner">
+                        <div class="absolute top-0 left-0 w-full bg-green-100 text-[10px] font-bold py-1 border-b border-gray-200 text-gray-500">THE FUEL</div>
+                        <div class="slot-strip flex flex-col items-center w-full pt-6" id="slot-3"></div>
+                        <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] pointer-events-none border-y-4 border-black/10"></div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex flex-col items-center gap-4">
+                    <button onclick="spinSlots()" id="spin-btn" class="w-full md:w-auto px-12 bg-[var(--neon-pink)] text-white font-black text-2xl py-4 rounded-full border-4 border-black hover:bg-[var(--deep-purple)] hover:scale-[1.05] active:scale-[0.95] transition-all flex items-center justify-center gap-3 shadow-[4px_4px_0_black]">
+                        <i data-lucide="refresh-cw" class="w-8 h-8 animate-spin-slow" id="spin-icon"></i> CHECK MY VIBE
+                    </button>
+                    
+                    <div id="slot-result" class="font-mono font-bold text-lg md:text-2xl min-h-[4em] flex items-center justify-center text-[var(--text-main)] bg-orange-200 px-6 py-2 -rotate-1 border-2 border-black opacity-0 transition-opacity duration-500 shadow-md">
+                        Loading aesthetic...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Checklist (IMPROVED: SLAY AUDIT) -->
+    <section id="stats" class="py-20 relative px-4">
+        <div class="max-w-3xl mx-auto">
+            <!-- Paper/Card Container -->
+            <div class="bg-white brutal-shadow border-4 border-[var(--text-main)] transform rotate-1 hover:rotate-0 transition-transform duration-300">
+                
+                <!-- Receipt/Header Styling -->
+                <div class="bg-[var(--text-main)] p-4 text-[var(--acid-green)] flex justify-between items-center">
+                    <h2 class="text-3xl md:text-5xl font-black font-mono uppercase">SLAY REPORT</h2>
+                    <div class="text-right font-mono text-xs md:text-sm leading-tight opacity-80">
+                        DATE: TODAY<br>
+                        ID: #BDAY-17
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="border-b-4 border-[var(--text-main)] p-4 bg-gray-100">
+                    <div class="flex justify-between font-bold font-mono mb-1 text-sm text-[var(--text-main)]">
+                        <span>COMPLETION STATUS</span>
+                        <span id="slay-percent">0%</span>
+                    </div>
+                    <div class="h-6 w-full border-2 border-[var(--text-main)] bg-white rounded-full overflow-hidden">
+                        <div id="slay-progress" class="h-full bg-[var(--neon-pink)] w-0 transition-all duration-500 ease-out flex items-center justify-center text-[10px] text-white font-bold tracking-widest striped-bg"></div>
+                    </div>
+                </div>
+
+                <!-- The List -->
+                <div class="p-6 md:p-8 space-y-4">
+                    
+                    <!-- Item 1 -->
+                    <div class="slay-item group cursor-pointer relative" onclick="toggleSlayItem(this, '👗')">
+                        <div class="absolute inset-0 bg-[var(--text-main)] translate-x-1 translate-y-1 transition-transform group-hover:translate-x-2 group-hover:translate-y-2"></div>
+                        <div class="relative bg-white border-2 border-[var(--text-main)] p-4 flex items-center justify-between transition-all group-active:translate-x-1 group-active:translate-y-1">
+                            <div class="flex items-center gap-4">
+                                <div class="checkbox-box w-8 h-8 border-2 border-[var(--text-main)] flex items-center justify-center transition-colors">
+                                    <i data-lucide="check" class="w-6 h-6 opacity-0 transition-opacity stroke-[4] text-[var(--text-main)]"></i>
+                                </div>
+                                <span class="text-lg md:text-xl font-bold font-mono text-[var(--text-main)]">Outfit Game: 10/10</span>
+                            </div>
+                            <span class="status-badge bg-gray-200 text-gray-500 text-xs font-bold px-2 py-1 border border-black rounded transition-colors">PENDING</span>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="slay-item group cursor-pointer relative" onclick="toggleSlayItem(this, '💅')">
+                        <div class="absolute inset-0 bg-[var(--text-main)] translate-x-1 translate-y-1 transition-transform group-hover:translate-x-2 group-hover:translate-y-2"></div>
+                        <div class="relative bg-white border-2 border-[var(--text-main)] p-4 flex items-center justify-between transition-all group-active:translate-x-1 group-active:translate-y-1">
+                            <div class="flex items-center gap-4">
+                                <div class="checkbox-box w-8 h-8 border-2 border-[var(--text-main)] flex items-center justify-center transition-colors">
+                                    <i data-lucide="check" class="w-6 h-6 opacity-0 transition-opacity stroke-[4] text-[var(--text-main)]"></i>
+                                </div>
+                                <span class="text-lg md:text-xl font-bold font-mono text-[var(--text-main)]">Main Character Energy</span>
+                            </div>
+                            <span class="status-badge bg-gray-200 text-gray-500 text-xs font-bold px-2 py-1 border border-black rounded transition-colors">PENDING</span>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="slay-item group cursor-pointer relative" onclick="toggleSlayItem(this, '🧠')">
+                        <div class="absolute inset-0 bg-[var(--text-main)] translate-x-1 translate-y-1 transition-transform group-hover:translate-x-2 group-hover:translate-y-2"></div>
+                        <div class="relative bg-white border-2 border-[var(--text-main)] p-4 flex items-center justify-between transition-all group-active:translate-x-1 group-active:translate-y-1">
+                            <div class="flex items-center gap-4">
+                                <div class="checkbox-box w-8 h-8 border-2 border-[var(--text-main)] flex items-center justify-center transition-colors">
+                                    <i data-lucide="check" class="w-6 h-6 opacity-0 transition-opacity stroke-[4] text-[var(--text-main)]"></i>
+                                </div>
+                                <span class="text-lg md:text-xl font-bold font-mono text-[var(--text-main)]">Genius IQ (Mostly)</span>
+                            </div>
+                            <span class="status-badge bg-gray-200 text-gray-500 text-xs font-bold px-2 py-1 border border-black rounded transition-colors">PENDING</span>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="slay-item group cursor-pointer relative" onclick="toggleSlayItem(this, '👯‍♀️')">
+                        <div class="absolute inset-0 bg-[var(--text-main)] translate-x-1 translate-y-1 transition-transform group-hover:translate-x-2 group-hover:translate-y-2"></div>
+                        <div class="relative bg-white border-2 border-[var(--text-main)] p-4 flex items-center justify-between transition-all group-active:translate-x-1 group-active:translate-y-1">
+                            <div class="flex items-center gap-4">
+                                <div class="checkbox-box w-8 h-8 border-2 border-[var(--text-main)] flex items-center justify-center transition-colors">
+                                    <i data-lucide="check" class="w-6 h-6 opacity-0 transition-opacity stroke-[4] text-[var(--text-main)]"></i>
+                                </div>
+                                <span class="text-lg md:text-xl font-bold font-mono text-[var(--text-main)]">Best Sister Award</span>
+                            </div>
+                            <span class="status-badge bg-gray-200 text-gray-500 text-xs font-bold px-2 py-1 border border-black rounded transition-colors">PENDING</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer / Stamp Area -->
+                <div class="bg-gray-100 p-6 border-t-4 border-[var(--text-main)] flex justify-center relative overflow-hidden h-24 items-center">
+                    <div id="slay-stamp" class="border-4 border-[var(--acid-green)] bg-white text-[var(--text-main)] font-black text-2xl md:text-4xl px-4 py-2 transform -rotate-12 opacity-0 rounded-lg absolute shadow-[4px_4px_0_var(--acid-green)] select-none">
+                        CERTIFIED SLAYER
+                    </div>
+                    <div id="slay-total" class="font-mono font-bold text-gray-400">TOTAL SCORE: CALCULATING...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Interactive Envelope Note Section (RESTORED) -->
+    <section id="message" class="py-20 md:py-32 px-4 bg-[var(--soft-cream)] overflow-hidden relative">
+        <div class="max-w-4xl mx-auto relative">
+            <!-- E-Card Container -->
+            <div class="bg-white border-4 border-black p-8 md:p-12 brutal-shadow relative min-h-[500px] flex flex-col items-center text-center isolate">
+                
+                <!-- Decorations -->
+                <div class="absolute -top-10 left-10 sway-balloon text-6xl md:text-8xl z-0 select-none">🎈</div>
+                <div class="absolute top-20 right-10 twinkle-star text-4xl text-[var(--acid-green)] select-none">✨</div>
+                <div class="absolute bottom-10 left-10 twinkle-star text-4xl text-[var(--neon-pink)] select-none" style="animation-delay: 1s">✨</div>
+
+                <!-- Profile & Rotating Text -->
+                <div class="relative w-32 h-32 mb-8 group cursor-pointer hover:scale-105 transition-transform duration-300">
+                    <!-- Rotating Text SVG -->
+                    <div class="absolute inset-0 rotating-text-wrapper pointer-events-none">
+                        <svg viewBox="0 0 100 100" class="w-full h-full">
+                            <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
+                            <text class="text-[10px] font-mono font-bold fill-[var(--text-main)] uppercase tracking-widest">
+                                <textPath href="#circlePath">
+                                    Birthday Queen • Aditi • 17 • Slay •
+                                </textPath>
+                            </text>
+                        </svg>
+                    </div>
+                    <!-- Image -->
+                    <div class="absolute inset-3 rounded-full overflow-hidden border-2 border-black bg-gray-200">
+                        <img src="https://ui-avatars.com/api/?name=Aditi&background=ccff00&color=000&size=128" class="w-full h-full object-cover" alt="Profile">
+                    </div>
+                </div>
+
+                <!-- Staggered Title -->
+                <div class="relative mb-6">
+                    <!-- Sliding Hat -->
+                    <div class="absolute -top-12 -right-8 text-5xl slide-hat z-20">🥳</div>
+                    
+                    <h2 class="text-5xl md:text-7xl font-black flex flex-wrap justify-center gap-1 font-name text-[var(--text-main)] drop-shadow-[4px_4px_0_var(--acid-green)]">
+                        <!-- Letters injected individually for stagger effect -->
+                        <span class="anim-letter" style="animation-delay: 0.1s">H</span>
+                        <span class="anim-letter" style="animation-delay: 0.15s">A</span>
+                        <span class="anim-letter" style="animation-delay: 0.2s">P</span>
+                        <span class="anim-letter" style="animation-delay: 0.25s">P</span>
+                        <span class="anim-letter" style="animation-delay: 0.3s">Y</span>
+                        <span class="w-4"></span>
+                        <span class="anim-letter" style="animation-delay: 0.4s">B</span>
+                        <span class="anim-letter" style="animation-delay: 0.45s">I</span>
+                        <span class="anim-letter" style="animation-delay: 0.5s">R</span>
+                        <span class="anim-letter" style="animation-delay: 0.55s">T</span>
+                        <span class="anim-letter" style="animation-delay: 0.6s">H</span>
+                        <span class="anim-letter" style="animation-delay: 0.65s">D</span>
+                        <span class="anim-letter" style="animation-delay: 0.7s">A</span>
+                        <span class="anim-letter" style="animation-delay: 0.75s">Y</span>
+                    </h2>
+                </div>
+
+                <!-- Typewriter Date Badge -->
+                <div class="inline-block bg-[var(--text-main)] text-[var(--acid-green)] border-2 border-black px-4 py-2 font-mono font-bold text-xl transform -rotate-2 mb-12 shadow-[4px_4px_0_var(--acid-green)]">
+                    <span id="date-typewriter"></span><span class="cursor-blink">|</span>
+                </div>
+
+                <!-- Open Letter Button -->
+                <button onclick="openLetterModal()" class="group relative px-8 py-3 font-bold font-mono text-lg bg-white border-2 border-black shadow-[4px_4px_0_black] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all overflow-hidden">
+                    <span class="relative z-10 flex items-center gap-2">
+                        OPEN LETTER 💌
+                    </span>
+                    <div class="absolute inset-0 bg-[var(--neon-pink)] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left z-0"></div>
+                    <span class="absolute inset-0 border-2 border-black pointer-events-none"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="letter-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-[#fff9c4] w-full max-w-2xl mx-4 p-8 md:p-12 border-4 border-black relative transform scale-90 transition-transform duration-300 shadow-[10px_10px_0_var(--neon-pink)]" id="letter-content-box">
+                <!-- Close Button -->
+                <button onclick="closeLetterModal()" class="absolute top-4 right-4 p-2 font-bold hover:bg-red-500 hover:text-white rounded-full transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+                
+                <!-- Date Stamp in Modal -->
+                <div class="absolute top-8 right-12 border-2 border-red-500 text-red-500 px-2 py-1 font-mono text-xs font-bold transform rotate-6 opacity-60">
+                    FROM: ME
+                </div>
+
+                <!-- Content Area -->
+                <div class="mt-8 min-h-[200px]">
+                    <p class="handwritten-font text-2xl md:text-3xl leading-relaxed text-gray-800" id="typewriter-body"></p>
+                </div>
+                
+                <div class="mt-8 flex justify-between items-end border-t-2 border-black/10 pt-4">
+                    <div class="text-sm font-mono opacity-50">100% LOVE GUARANTEED</div>
+                    <div class="transform -rotate-2">
+                        <p class="font-black font-mono text-lg">- Your Cute Brother</p>
+                        <div class="h-1 w-full bg-[var(--neon-pink)] mt-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--text-main)] text-[var(--soft-cream)] py-12 border-t-4 border-[var(--acid-green)] text-center font-mono">
+        <p class="mb-4">CODED WITH ❤️ & ☕ FOR MY SISTER</p>
+        <p class="text-sm opacity-60">© 2026 BIRTHDAY EDITION v17.0</p>
+        <div class="flex justify-center gap-4 mt-6">
+            <a href="#" class="hover:text-[var(--acid-green)] transition-colors"><i data-lucide="instagram"></i></a>
+            <a href="#" class="hover:text-[var(--acid-green)] transition-colors"><i data-lucide="twitter"></i></a>
+            <a href="#" class="hover:text-[var(--acid-green)] transition-colors"><i data-lucide="music"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+        
+        // --- NEW: Theme Switcher Logic (Missing in previous context) ---
+        const themes = [null, 'dark', 'retro']; // null is default
+        let currentThemeIndex = 0;
+
+        function switchTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const theme = themes[currentThemeIndex];
+            if (theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+            if (typeof confetti === 'function') triggerConfetti();
+        }
+
+        // --- NEW: Level 17 Theme Toggle ---
+        function toggleLevel17Theme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'level17') {
+                html.removeAttribute('data-theme');
+            } else {
+                html.setAttribute('data-theme', 'level17');
+                triggerConfetti(); 
+            }
+        }
+
+        // --- ENHANCED AUDIO PLAYER LOGIC ---
+        const songs = [
+            { title: "Pal Pal Dil Ke Paas", artist: "Arijit Singh", src: "pal-pal_song.mp3" },
+            { title: "Attention", artist: "Charlie Puth", src: "Charlie Puth - Attention (Lyrics).mp3" },
+            { title: "Bye Bye Bye", artist: "*NSYNC", src: "_NSYNC - Bye Bye Bye.mp3" },
+            { title: "MAURYA", artist: "artcriminal ft. Mitika", src: "artcriminal - MAURYA (feat. Mitika Kanwar).mp3" },
+            { title: "Avisei", artist: "Rolly Bzy", src: "rolly-bzy-avisei_produzido-na-sons-a.mp3" }
+        ];
+
+        let currentTrackIndex = 0;
+        let isRepeat = false;
+
+        const audio = document.getElementById('birthday-audio');
+        const iconPlay = document.getElementById('icon-play');
+        const iconPause = document.getElementById('icon-pause');
+        const disc = document.getElementById('music-disc');
+        const equalizerBars = document.querySelectorAll('.equalizer-bar');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const currTimeDisplay = document.getElementById('curr-time');
+        const durTimeDisplay = document.getElementById('dur-time');
+        const playlistContainer = document.getElementById('playlist-tracks');
+        const playlistOverlay = document.getElementById('playlist-view');
+        const marqueeText = document.getElementById('player-marquee');
+
+        // Video elements for pausing
+        const videoElement = document.getElementById('memory-video');
+        const videoOverlay = document.getElementById('video-play-overlay');
+        const videoContainer = document.getElementById('video-card-container');
+        const videoProgress = document.getElementById('video-progress');
+        const videoScrubber = document.getElementById('video-scrubber-area');
+        const volIcon = document.getElementById('vol-icon');
+        const heartAnim = document.getElementById('double-tap-heart');
+        const likeCount = document.getElementById('like-count');
+
+        function initPlayer() {
+            if (playlistContainer) {
+                playlistContainer.innerHTML = songs.map((song, index) => `
+                    <div class="track-item p-2 rounded flex justify-between items-center border-b border-white/5 ${index === currentTrackIndex ? 'active' : ''}" onclick="loadTrack(${index})">
+                        <div class="flex flex-col w-3/4">
+                            <span class="truncate font-bold">${index + 1}. ${song.title}</span>
+                            <span class="text-[10px] opacity-50 truncate">${song.artist}</span>
+                        </div>
+                        <i data-lucide="play-circle" class="w-4 h-4 opacity-50"></i>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            }
+            audio.src = songs[currentTrackIndex].src;
+            updateMarquee();
+        }
+
+        function loadTrack(index) {
+            currentTrackIndex = index;
+            audio.src = songs[currentTrackIndex].src;
+            if (playlistContainer) {
+                document.querySelectorAll('.track-item').forEach((item, i) => {
+                    if (i === index) item.classList.add('active');
+                    else item.classList.remove('active');
+                });
+            }
+            updateMarquee();
+            playAudio();
+            if(window.innerWidth < 768 && playlistOverlay.classList.contains('active')) {
+                togglePlaylist();
+            }
+        }
+
+        function toggleMusic() {
+            if (audio.paused) playAudio();
+            else pauseAudio();
+        }
+
+        function playAudio() {
+            if (videoElement && !videoElement.paused) {
+                 videoElement.pause();
+                 if(videoOverlay) videoOverlay.classList.remove('opacity-0');
+            }
+            audio.play().then(() => {
+                iconPlay.classList.add('hidden');
+                iconPause.classList.remove('hidden');
+                disc.classList.add('playing');
+                equalizerBars.forEach(bar => bar.classList.add('playing'));
+            }).catch(e => console.log("Audio play error:", e));
+        }
+
+        function pauseAudio() {
+            audio.pause();
+            iconPlay.classList.remove('hidden');
+            iconPause.classList.add('hidden');
+            disc.classList.remove('playing');
+            equalizerBars.forEach(bar => bar.classList.remove('playing'));
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % songs.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + songs.length) % songs.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        function toggleRepeat(btn) {
+            isRepeat = !isRepeat;
+            btn.style.color = isRepeat ? '#39ff14' : 'rgba(255,255,255,0.5)';
+            audio.loop = isRepeat;
+        }
+
+        function togglePlaylist() {
+            if(playlistOverlay) {
+                playlistOverlay.classList.toggle('active');
+                const btn = document.getElementById('btn-playlist');
+                if(btn) {
+                    if(playlistOverlay.classList.contains('active')) {
+                        btn.classList.add('text-[var(--acid-green)]');
+                        btn.classList.remove('text-white/50');
+                    } else {
+                        btn.classList.remove('text-[var(--acid-green)]');
+                        btn.classList.add('text-white/50');
+                    }
+                }
+            }
+        }
+
+        function updateMarquee() {
+            const song = songs[currentTrackIndex];
+            if(marqueeText) {
+                marqueeText.innerText = `NOW PLAYING: ${song.title.toUpperCase()} - ${song.artist.toUpperCase()} • ADITI'S MIX VOL. 17 • `;
+            }
+        }
+
+        audio.addEventListener('timeupdate', (e) => {
+            const { duration, currentTime } = e.srcElement;
+            const progressPercent = (currentTime / duration) * 100;
+            if(progressBar) progressBar.style.width = `${progressPercent}%`;
+            if (duration) {
+                if(currTimeDisplay) currTimeDisplay.innerText = formatTime(currentTime);
+                if(durTimeDisplay) durTimeDisplay.innerText = formatTime(duration);
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            if(!isRepeat) nextTrack();
+        });
+        
+        if(progressContainer) {
+            progressContainer.addEventListener('click', (e) => {
+                const width = progressContainer.clientWidth;
+                const clickX = e.offsetX;
+                const duration = audio.duration;
+                audio.currentTime = (clickX / width) * duration;
+            });
+        }
+
+        function formatTime(time) {
+            if(isNaN(time)) return "0:00";
+            const min = Math.floor(time / 60);
+            const sec = Math.floor(time % 60);
+            return `${min}:${sec < 10 ? '0' + sec : sec}`;
+        }
+        
+        // --- Video Player Logic ---
+        function toggleVideoState() {
+            if (videoElement.paused) {
+                if (audio && !audio.paused) toggleMusic();
+                videoElement.play();
+                videoOverlay.classList.add('opacity-0');
+            } else {
+                videoElement.pause();
+                videoOverlay.classList.remove('opacity-0');
+            }
+        }
+
+        videoContainer.addEventListener('click', (e) => {
+            if(e.target.closest('button') || e.target.closest('#video-scrubber-area')) return;
+            toggleVideoState();
+        });
+
+        videoContainer.addEventListener('dblclick', (e) => {
+            heartAnim.classList.remove('animate-like');
+            void heartAnim.offsetWidth; 
+            heartAnim.classList.add('animate-like');
+            let likes = parseInt(likeCount.innerText.replace('k', ''));
+            if(!likeCount.getAttribute('data-liked')) {
+                likeCount.innerText = "17.1k"; 
+                likeCount.setAttribute('data-liked', 'true');
+            }
+        });
+
+        videoElement.addEventListener('timeupdate', () => {
+            const percent = (videoElement.currentTime / videoElement.duration) * 100;
+            videoProgress.style.width = `${percent}%`;
+        });
+
+        videoScrubber.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            const rect = videoScrubber.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            videoElement.currentTime = pos * videoElement.duration;
+        });
+
+        function toggleMute(e) {
+            if(e) e.stopPropagation();
+            videoElement.muted = !videoElement.muted;
+            if (videoElement.muted) {
+                volIcon.setAttribute('data-lucide', 'volume-x');
+            } else {
+                volIcon.setAttribute('data-lucide', 'volume-2');
+            }
+            lucide.createIcons();
+        }
+
+        // --- NEW: Slay Report Logic ---
+        function toggleSlayItem(element, emoji) {
+            if (element.classList.contains('checked')) return; 
+            element.classList.add('checked');
+            const badge = element.querySelector('.status-badge');
+            if (badge) {
+                badge.innerText = "VERIFIED";
+                badge.classList.remove('bg-gray-200', 'text-gray-500');
+            }
+            updateSlayProgress();
+        }
+
+        function updateSlayProgress() {
+            const items = document.querySelectorAll('.slay-item');
+            const checked = document.querySelectorAll('.slay-item.checked');
+            if (items.length === 0) return;
+            const percent = Math.round((checked.length / items.length) * 100);
+            const bar = document.getElementById('slay-progress');
+            const text = document.getElementById('slay-percent');
+            const totalText = document.getElementById('slay-total');
+            const stamp = document.getElementById('slay-stamp');
+            if(bar) bar.style.width = `${percent}%`;
+            if(text) text.innerText = `${percent}%`;
+            if (percent === 100) {
+                if(totalText) totalText.style.opacity = '0';
+                if(stamp) stamp.classList.add('stamp-animation');
+                setTimeout(() => { triggerConfetti(); }, 300);
+            }
+        }
+
+        // --- NEW: Desi Vibe Machine Logic (Restored) ---
+        const aesthetics = ["Kurta & Sneakers 👟", "SoBo Aesthetic 💅", "Sarojini Slayer 🛍️", "Poo Bani Parvati 🎬", "Saree Not Sorry 🥻", "Desi Dark Academia 🕯️", "Band Baaja Ready 🎺"];
+        const eras = ["Delulu is Solulu 🦄", "Nazar Na Lage 🧿", "Goa Plan (Cancelled) 🏖️", "Academic Victim 📚", "Rishta Mode 💍", "Shark Tank Pitch 🦈", "Healing Era 🧘‍♀️"];
+        const powerups = ["Adrak Chai ☕", "Theekha Golgappa 🤤", "Momos w/ Chutney 🥟", "Auto Ride 🛺", "Biryani Bucket 🍗", "Unlimited Data 📱", "Jhumka Drop ✨"];
+
+        const slot1 = document.getElementById('slot-1');
+        const slot2 = document.getElementById('slot-2');
+        const slot3 = document.getElementById('slot-3');
+        const resultDisplay = document.getElementById('slot-result');
+        const spinBtn = document.getElementById('spin-btn');
+        const spinIcon = document.getElementById('spin-icon');
+
+        renderSlot(slot1, aesthetics);
+        renderSlot(slot2, eras);
+        renderSlot(slot3, powerups);
+
+        function renderSlot(element, items) {
+            const repeated = [...items, ...items, ...items, ...items]; 
+            element.innerHTML = repeated.map(item => `
+                <div class="slot-item h-32 md:h-48 flex items-center justify-center text-center p-2 w-full">
+                    <span class="text-lg md:text-2xl font-black uppercase leading-tight break-words w-full px-2">${item}</span>
+                </div>
+            `).join('');
+        }
+
+        let isSpinning = false;
+        function spinSlots() {
+            if(isSpinning) return;
+            isSpinning = true;
+            spinBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            spinIcon.classList.add('animate-spin');
+            resultDisplay.style.opacity = '0';
+            const stopIndex1 = Math.floor(Math.random() * aesthetics.length) + aesthetics.length; 
+            const stopIndex2 = Math.floor(Math.random() * eras.length) + eras.length;
+            const stopIndex3 = Math.floor(Math.random() * powerups.length) + powerups.length;
+            const itemHeight = window.innerWidth < 768 ? 128 : 192;
+            animateStrip(slot1, stopIndex1, itemHeight, 1000);
+            animateStrip(slot2, stopIndex2, itemHeight, 1500);
+            animateStrip(slot3, stopIndex3, itemHeight, 2000, () => {
+                isSpinning = false;
+                spinBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                spinIcon.classList.remove('animate-spin');
+                const res1 = aesthetics[stopIndex1 % aesthetics.length];
+                const res2 = eras[stopIndex2 % eras.length];
+                const res3 = powerups[stopIndex3 % powerups.length];
+                resultDisplay.innerHTML = `<div class="text-center font-mono leading-relaxed"><span class="bg-white px-2 text-sm text-black">OFFICIAL REPORT:</span><br>✨ ${res1} <br>+ ${res2} <br>+ ${res3} ✨</div>`;
+                resultDisplay.style.opacity = '1';
+                triggerConfetti();
+            });
+        }
+
+        function animateStrip(element, stopIndex, height, duration, callback) {
+            element.style.transition = 'none';
+            element.style.transform = 'translateY(0)';
+            element.offsetHeight;
+            element.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.9, 0.2, 1)`;
+            element.style.transform = `translateY(-${stopIndex * height}px)`;
+            if (callback) setTimeout(callback, duration);
+        }
+
+        // --- NEW: Tic-Tac-Toe Logic ---
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        const tttBoard = document.getElementById('ttt-board');
+        const tttStatus = document.getElementById('ttt-status');
+        const tttOverlay = document.getElementById('ttt-overlay');
+        const tttWinnerText = document.getElementById('ttt-winner-text');
+
+        function initGame() {
+            if(!tttBoard) return;
+            tttBoard.innerHTML = '';
+            board.forEach((cell, index) => {
+                const cellDiv = document.createElement('div');
+                cellDiv.classList.add('ttt-cell', 'rounded-md'); 
+                cellDiv.dataset.index = index;
+                cellDiv.innerText = cell;
+                if(cell === 'X') cellDiv.classList.add('x');
+                if(cell === 'O') cellDiv.classList.add('o');
+                cellDiv.addEventListener('click', handleCellClick);
+                tttBoard.appendChild(cellDiv);
+            });
+        }
+
+        function handleCellClick(e) {
+            const clickedCell = e.target;
+            const clickedCellIndex = parseInt(clickedCell.dataset.index);
+            if (board[clickedCellIndex] !== '' || !gameActive) return;
+            handleCellPlayed(clickedCell, clickedCellIndex);
+            handleResultValidation();
+        }
+
+        function handleCellPlayed(clickedCell, clickedCellIndex) {
+            board[clickedCellIndex] = currentPlayer;
+            clickedCell.innerText = currentPlayer;
+            clickedCell.classList.add(currentPlayer.toLowerCase());
+        }
+
+        function handleResultValidation() {
+            const winningConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+            let roundWon = false;
+            for (let i = 0; i <= 7; i++) {
+                const winCondition = winningConditions[i];
+                let a = board[winCondition[0]];
+                let b = board[winCondition[1]];
+                let c = board[winCondition[2]];
+                if (a === '' || b === '' || c === '') continue;
+                if (a === b && b === c) {
+                    roundWon = true;
+                    break;
+                }
+            }
+            if (roundWon) {
+                gameActive = false;
+                if(tttWinnerText) tttWinnerText.innerText = `${currentPlayer} WINS! 🎉`;
+                if(tttOverlay) tttOverlay.classList.remove('hidden');
+                triggerConfetti();
+                return;
+            }
+            let roundDraw = !board.includes("");
+            if (roundDraw) {
+                gameActive = false;
+                if(tttWinnerText) tttWinnerText.innerText = `DRAW! 🤝`;
+                if(tttOverlay) tttOverlay.classList.remove('hidden');
+                return;
+            }
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            if(tttStatus) tttStatus.innerText = `PLAYER ${currentPlayer}'s TURN`;
+        }
+
+        function resetGame() {
+            gameActive = true;
+            currentPlayer = "X";
+            board = ['', '', '', '', '', '', '', '', ''];
+            if(tttStatus) tttStatus.innerText = `PLAYER X's TURN`;
+            if(tttOverlay) tttOverlay.classList.add('hidden');
+            initGame();
+        }
+
+        // Initialize TicTacToe when game loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Need to wait slightly for DOM in some environments or check immediately
+            if(document.getElementById('ttt-board')) initGame();
+        });
+
+        // --- NEW: E-CARD & TYPEWRITER LOGIC ---
+        // Date Badge Typewriter
+        function startDataBadgeTypewriter() {
+            const text = "3 FEB"; 
+            const element = document.getElementById('date-typewriter');
+            if(!element) return;
+            let i = 0;
+            element.innerHTML = "";
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 150); 
+                }
+            }
+            setTimeout(type, 1500); 
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('letter-modal');
+        const modalContent = document.getElementById('letter-content-box');
+        const typewriterBody = document.getElementById('typewriter-body');
+        const letterText = "Happy 17th Birthday Aditi! 🎉\n\nJust wanted to pause the chaos for a sec to say I'm actually really proud of the person you're becoming. You're funny, smart, and only slightly annoying (sometimes).\n\nI hope your 17th year is filled with amazing moments, lots of laughter, and dreams coming true. Shine on!";
+
+        function openLetterModal() {
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            });
+            
+            triggerConfetti();
+            createBalloons();
+            startLetterTypewriter();
+        }
+
+        function closeLetterModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function startLetterTypewriter() {
+            typewriterBody.innerHTML = ""; 
+            let i = 0;
+            
+            function typeLetter() {
+                if (i < letterText.length) {
+                    const char = letterText.charAt(i);
+                    if (char === '\n') {
+                        typewriterBody.innerHTML += '<br>';
+                    } else {
+                        typewriterBody.innerHTML += char;
+                    }
+                    i++;
+                    const speed = Math.random() * 30 + 30; 
+                    
+                    if(!modal.classList.contains('hidden')) {
+                        setTimeout(typeLetter, speed);
+                    }
+                }
+            }
+            setTimeout(typeLetter, 500);
+        }
+
+        // --- Video Intro Logic ---
+        window.onload = function() {
+            lucide.createIcons();
+            initPlayer();
+            initGame();
+
+            // Trigger Date Badge Typewriter
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        startDataBadgeTypewriter();
+                        observer.disconnect(); 
+                    }
+                });
+            });
+            const msgSection = document.getElementById('message');
+            if(msgSection) observer.observe(msgSection); 
+
+            const startBtn = document.getElementById('enter-party-btn'); 
+            const introOverlay = document.getElementById('video-intro-overlay');
+            const video = document.getElementById('intro-video');
+            const body = document.getElementById('body');
+
+            startBtn.addEventListener('click', function() {
+                introOverlay.classList.add('slide-up');
+                body.classList.remove('overflow-hidden');
+
+                setTimeout(() => {
+                    triggerConfetti();
+                    createBalloons();
+                    activateRaveMode();
+                    body.classList.add('shake-screen');
+                    setTimeout(() => body.classList.remove('shake-screen'), 500);
+                    
+                    if(video) video.pause();
+                    setTimeout(() => introOverlay.remove(), 1000);
+                }, 500);
+
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const warmUp = new SpeechSynthesisUtterance('ready');
+                    warmUp.volume = 0; 
+                    window.speechSynthesis.speak(warmUp);
+                }
+            });
+            
+            let titleIndex = 0;
+            const titles = ["HBD SIS - 17", "QUEEN B-DAY 👑", "LEVEL 17 🔓", "PARTY MODE ON 🎉"];
+            setInterval(() => {
+                document.title = titles[titleIndex];
+                titleIndex = (titleIndex + 1) % titles.length;
+            }, 2000);
+        }
+
+        // --- Hype Meter ---
+        let hypeCount = 0;
+        const hypeEmojis = ['🔥', '💖', '💅', '👑', '🎉', '🆒'];
+        
+        function addHype(event) {
+            hypeCount++;
+            document.getElementById('hype-count').innerText = hypeCount;
+            const btn = event.currentTarget;
+            const particle = document.createElement('div');
+            particle.className = 'hype-particle';
+            particle.innerText = hypeEmojis[Math.floor(Math.random() * hypeEmojis.length)];
+            const rect = btn.getBoundingClientRect();
+            particle.style.left = (rect.left + rect.width / 2) + 'px';
+            particle.style.top = (rect.top) + 'px';
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 1000);
+        }
+
+        // --- INTERACTIVE: Title Scramble ---
+        function scrambleTitle() {
+            const title = document.getElementById('main-title');
+            title.style.fontFamily = "monospace";
+            title.style.color = "var(--neon-pink)";
+            setTimeout(() => {
+                title.style.fontFamily = "'Syne', sans-serif";
+                title.style.color = "";
+            }, 300);
+        }
+
+        // --- Confetti Function ---
+        function triggerConfetti() {
+            if (typeof confetti !== 'function') return;
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+            var timeLeft = animationEnd - Date.now();
+            if (timeLeft <= 0) return clearInterval(interval);
+            var particleCount = 50 * (timeLeft / duration);
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+        
+        // --- Balloon Generator ---
+        function createBalloons() {
+            const emojis = ["🎈", "17", "👑", "💅", "🎂", "✨"];
+            const container = document.body;
+            for(let i=0; i<15; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                balloon.style.left = Math.random() * 90 + 'vw';
+                balloon.style.animationDelay = Math.random() * 2 + 's';
+                balloon.style.fontSize = (Math.random() * 2 + 2) + 'rem';
+                container.appendChild(balloon);
+                setTimeout(() => balloon.remove(), 7000);
+            }
+        }
+
+        // --- Rave Mode ---
+        function activateRaveMode() {
+            let cycles = 0;
+            const maxCycles = 15;
+            const interval = setInterval(() => {
+                switchTheme();
+                cycles++;
+                if(cycles >= maxCycles) {
+                    clearInterval(interval);
+                    document.documentElement.removeAttribute('data-theme');
+                }
+            }, 200);
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
