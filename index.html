@@ -171,32 +171,92 @@
         #video-intro-overlay { transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1); }
         #video-intro-overlay.slide-up { transform: translateY(-100%); }
 
-        /* Music Player Animations */
-        .music-disc { animation: spin 3s linear infinite; animation-play-state: paused; transition: transform 0.5s ease; }
-        .music-disc.playing { animation-play-state: running; }
+        /* --- RESTORED: Cassette Music Player Styles --- */
+        .cassette-card {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 4px solid #444;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 8px 8px 0 var(--text-main);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tape-window {
+            background: #000;
+            border-radius: 8px;
+            border: 2px solid #555;
+            position: relative;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle, #333 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+        
+        .tape-label {
+            background: #fff;
+            transform: rotate(-1deg);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            font-family: 'Patrick Hand', cursive;
+            color: #333;
+        }
+        
+        .spool {
+            width: 32px;
+            height: 32px;
+            border: 4px solid #eee;
+            border-radius: 50%;
+            position: relative;
+        }
+        .spool::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 4px dashed #999;
+            border-radius: 50%;
+        }
+        
+        /* Animation tied to playing state */
+        .spool.playing {
+            animation: spin 2s linear infinite;
+        }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Cassette Buttons */
+        .tape-btn {
+            background: #333;
+            border-radius: 4px;
+            border-bottom: 4px solid #111;
+            transition: all 0.1s;
+        }
+        .tape-btn:active {
+            transform: translateY(4px);
+            border-bottom: 0;
+        }
         
-        .equalizer-bar { width: 4px; background: var(--neon-pink); animation: equalize 0.8s ease-in-out infinite; animation-play-state: paused; }
-        .equalizer-bar.playing { animation-play-state: running; }
-        @keyframes equalize { 0%, 100% { height: 20%; } 50% { height: 100%; } }
-        
+        /* Playlist Styles */
         .playlist-overlay { transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 40; }
         .playlist-overlay.active { transform: translateY(0); }
         .track-item { cursor: pointer; transition: all 0.2s; border-left: 2px solid transparent; }
         .track-item:hover { background: rgba(255, 255, 255, 0.1); padding-left: 0.5rem; }
         .track-item.active { color: #39ff14; border-left-color: #39ff14; padding-left: 0.5rem; background: rgba(57, 255, 20, 0.1); }
         
-        .holo-cd {
-            background: radial-gradient(circle, #111 10%, transparent 11%), conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
-            border-radius: 50%; position: relative; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        /* Volume Slider */
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 60px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            cursor: pointer;
         }
-        .holo-cd::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 2px, transparent 2px, transparent 4px); }
-        .holo-cd::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%, rgba(255,255,255,0.1) 100%); pointer-events: none; mix-blend-mode: overlay; }
-        
-        .player-lcd { background-color: #1a202c; color: #39ff14; font-family: 'Courier New', monospace; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); border: 2px solid #333; }
-        .visualizer-bar-cool { width: 4px; background: #39ff14; animation: bounce 0.5s infinite ease-in-out alternate; animation-play-state: paused; }
-        .visualizer-bar-cool.playing { animation-play-state: running; }
-        @keyframes bounce { 0% { height: 20%; opacity: 0.5; } 100% { height: 100%; opacity: 1; } }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--neon-pink);
+            cursor: pointer;
+        }
 
         /* Glitch Text */
         .glitch-text { position: relative; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: textShaking 0.3s infinite; }
@@ -294,6 +354,10 @@
     <!-- Noise Texture Overlay -->
     <div class="noise"></div>
 
+    <!-- Background Blobs -->
+    <div class="blob bg-purple-400 w-64 h-64 md:w-96 md:h-96 rounded-full top-0 left-0 mix-blend-multiply animate-pulse"></div>
+    <div class="blob bg-pink-400 w-64 h-64 md:w-96 md:h-96 rounded-full bottom-0 right-0 mix-blend-multiply animation-delay-2000"></div>
+
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 border-b-4 border-black bg-white/95 backdrop-blur-sm transition-colors duration-500" style="border-color: var(--text-main); background-color: var(--card-bg);">
         <div class="max-w-7xl mx-auto px-4 py-3">
@@ -369,7 +433,7 @@
         <h2 class="text-4xl md:text-7xl font-bold mb-8 md:mb-12 text-center">CORE <span class="text-[var(--neon-pink)] italic">MEMORIES</span></h2>
         
         <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-3 gap-6 h-auto md:h-[800px]">
-            <!-- Large Item (Fixed Transition) -->
+            <!-- Large Item -->
             <div class="md:col-span-2 md:row-span-2 brutal-card rounded-2xl p-0 relative group h-80 md:h-full">
                 <div class="flip-container h-full w-full" onclick="this.classList.toggle('flipped')">
                     <div class="flip-inner h-full w-full">
@@ -394,133 +458,81 @@
                 <p class="text-white font-black text-3xl text-center leading-tight">"STAY<br>WILD<br>SIS"</p>
             </div>
 
-            <!-- Playlist Item (Cyber) -->
-            <div class="md:col-span-1 md:row-span-2 brutal-card rounded-3xl p-6 flex flex-col justify-between bg-zinc-900 h-auto md:h-full relative overflow-hidden border-4 border-white shadow-[8px_8px_0_var(--acid-green)] group">
-                <!-- Background Noise/Texture -->
-                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/stardust.png');"></div>
-
+            <!-- Playlist Item (REDESIGNED: CASSETTE PLAYER) -->
+            <div class="md:col-span-1 md:row-span-2 cassette-card rounded-3xl p-5 flex flex-col justify-between h-auto md:h-full relative group">
                 <!-- Hidden Audio Element -->
                 <audio id="birthday-audio" preload="metadata"></audio>
                 
-                <!-- Top: Status Bar -->
-                <div class="flex justify-between items-center mb-4 z-20 relative">
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse box-shadow-[0_0_8px_red]"></div>
-                        <span class="text-white font-mono text-xs tracking-widest">LIVE MIX</span>
+                <!-- Cassette Window -->
+                <div class="tape-window h-32 flex justify-center items-center gap-6 mb-4">
+                    <div class="spool"></div>
+                    <div class="spool"></div>
+                    <!-- Tape Connector -->
+                    <div class="absolute w-2/3 h-1 bg-black/50 bottom-4 rounded-full"></div>
+                </div>
+                
+                <!-- Label -->
+                <div class="tape-label p-2 mb-4 text-center rounded shadow-sm border border-gray-300">
+                    <div id="player-marquee" class="font-black text-xl leading-none tracking-tight overflow-hidden whitespace-nowrap">
+                        ADITI'S MIX 📼
                     </div>
-                    <div class="flex gap-1">
-                         <span class="w-1 h-3 bg-white/20 rounded-full"></span>
-                         <span class="w-1 h-4 bg-white/40 rounded-full"></span>
-                         <span class="w-1 h-3 bg-white/60 rounded-full"></span>
-                         <span class="w-1 h-5 bg-[var(--acid-green)] rounded-full"></span>
+                    <div class="flex justify-between items-center mt-1 px-1">
+                        <p class="font-mono text-[10px] text-gray-500">Vol. 17</p>
+                        <span id="curr-time" class="font-mono text-[10px] text-gray-500">0:00</span>
                     </div>
                 </div>
 
-                <!-- Middle: Holographic CD (Relative for overlay) -->
-                <div class="relative flex justify-center items-center py-2 z-10 flex-grow overflow-hidden">
-                    <!-- The CD -->
-                    <div id="music-disc" class="holo-cd w-40 h-40 md:w-48 md:h-48 music-disc border-4 border-white/10 flex items-center justify-center transition-all duration-300 rounded-full bg-black">
-                         <!-- Cover Art Center -->
-                         <div class="absolute inset-12 bg-cover bg-center rounded-full border-4 border-black" style="background-image: url('https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=300&auto=format&fit=crop');"></div>
-                         <div class="absolute inset-[42%] bg-black rounded-full border-2 border-white/50 z-20"></div>
+                <!-- Controls -->
+                <div class="mt-auto">
+                    <!-- Progress Bar -->
+                    <div class="h-2 bg-[#222] w-full rounded-full cursor-pointer relative group border border-[#444] mb-3" id="progress-container">
+                        <div id="progress-bar" class="h-full bg-[var(--acid-green)] w-0 relative transition-all duration-100 ease-linear shadow-[0_0_5px_var(--acid-green)]"></div>
                     </div>
                     
-                    <!-- Playlist Overlay (Hidden by default) -->
-                    <div id="playlist-view" class="playlist-overlay absolute inset-0 bg-black/95 backdrop-blur-md rounded-xl p-4 overflow-y-auto border border-white/10 z-30">
-                        <div class="flex justify-between items-center mb-3 sticky top-0 bg-black/95 pb-2 border-b border-white/10 z-10">
-                             <h4 class="text-[var(--acid-green)] font-mono font-bold text-xs">TRACKLIST_V17</h4>
-                             <button onclick="togglePlaylist()" class="text-white hover:text-red-500"><i data-lucide="x" class="w-4 h-4"></i></button>
-                        </div>
-                        <div id="playlist-tracks" class="flex flex-col gap-2 text-white font-mono text-xs pb-10">
-                            <!-- Tracks injected by JS -->
-                        </div>
+                    <div class="flex justify-between items-center gap-2">
+                         <button onclick="toggleRepeat(this)" class="tape-btn p-2 text-gray-400 hover:text-white" id="btn-repeat"><i data-lucide="repeat" class="w-4 h-4"></i></button>
+                         <button onclick="prevTrack()" class="tape-btn p-2 text-white hover:bg-[#444]"><i data-lucide="skip-back" class="w-6 h-6 fill-current"></i></button>
+                         <button onclick="toggleMusic()" class="tape-btn p-3 bg-[var(--acid-green)] text-black border-b-[var(--neon-pink)] hover:brightness-110 shadow-lg">
+                            <span id="icon-play"><i data-lucide="play" class="w-8 h-8 fill-current"></i></span>
+                            <span id="icon-pause" class="hidden"><i data-lucide="pause" class="w-8 h-8 fill-current"></i></span>
+                         </button>
+                         <button onclick="nextTrack()" class="tape-btn p-2 text-white hover:bg-[#444]"><i data-lucide="skip-forward" class="w-6 h-6 fill-current"></i></button>
+                         <button onclick="togglePlaylist()" class="tape-btn p-2 text-gray-400 hover:text-white" id="btn-playlist"><i data-lucide="list" class="w-4 h-4"></i></button>
                     </div>
                     
-                    <!-- Floating Notes -->
-                    <i data-lucide="music" class="absolute top-4 right-2 text-[var(--neon-pink)] w-6 h-6 animate-bounce" style="animation-delay: 0.2s"></i>
-                    <i data-lucide="music-2" class="absolute bottom-4 left-2 text-[var(--acid-green)] w-8 h-8 animate-bounce" style="animation-delay: 0.5s"></i>
+                    <!-- Volume & Shuffle Row -->
+                    <div class="flex justify-between items-center mt-2 px-2">
+                        <button onclick="toggleShuffle(this)" class="text-gray-500 hover:text-white" id="btn-shuffle"><i data-lucide="shuffle" class="w-3 h-3"></i></button>
+                        <button onclick="toggleFavorite(this)" class="text-gray-500 hover:text-[var(--neon-pink)]" id="btn-heart"><i data-lucide="heart" class="w-3 h-3"></i></button>
+                        <div class="flex items-center gap-1 group/vol relative">
+                             <i id="vol-icon" data-lucide="volume-2" class="w-3 h-3 text-gray-500"></i>
+                             <input type="range" min="0" max="1" step="0.1" value="1" class="w-12 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" oninput="setVolume(this.value)">
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Bottom: Controls & LCD -->
-                <div class="z-20 mt-auto relative">
-                    <!-- LCD Display -->
-                    <div class="bg-[#1a202c] p-3 rounded-lg mb-4 relative overflow-hidden border-2 border-[#333] shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]">
-                         <!-- Scanning line -->
-                         <div class="absolute top-0 left-0 w-full h-1 bg-white/10 animate-[scan_2s_linear_infinite]"></div>
-                         
-                         <div class="flex justify-between items-end mb-2">
-                             <div class="overflow-hidden whitespace-nowrap w-2/3">
-                                 <div id="player-marquee" class="animate-[marquee_8s_linear_infinite] inline-block font-bold text-[#39ff14] font-mono whitespace-nowrap">
-                                     SELECT A TRACK TO START...
-                                 </div>
-                             </div>
-                             <div class="flex gap-1 h-4 items-end" id="equalizer-cool">
-                                <div class="visualizer-bar-cool rounded-t-sm" style="animation-delay: 0s"></div>
-                                <div class="visualizer-bar-cool rounded-t-sm" style="animation-delay: 0.1s"></div>
-                                <div class="visualizer-bar-cool rounded-t-sm" style="animation-delay: 0.2s"></div>
-                                <div class="visualizer-bar-cool rounded-t-sm" style="animation-delay: 0.3s"></div>
-                             </div>
-                         </div>
-                         
-                         <div class="flex justify-between text-[10px] opacity-80 mb-1 text-[#39ff14] font-mono">
-                             <span id="curr-time">0:00</span>
-                             <span id="dur-time">--:--</span>
-                         </div>
-                         
-                         <!-- Progress Line -->
-                         <div class="h-1.5 bg-white/20 w-full rounded-full cursor-pointer relative group" id="progress-container">
-                             <div id="progress-bar" class="h-full bg-[#39ff14] w-0 relative transition-all duration-100 ease-linear">
-                                 <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_8px_#39ff14] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                             </div>
-                         </div>
+                
+                <!-- Playlist Overlay -->
+                <div id="playlist-view" class="playlist-overlay absolute inset-0 bg-[#1a1a1a]/95 backdrop-blur-md rounded-xl p-4 overflow-y-auto border border-[#444] z-30 shadow-2xl">
+                    <div class="flex justify-between items-center mb-3 sticky top-0 bg-[#1a1a1a] pb-2 border-b border-[#444] z-10">
+                         <h4 class="text-[var(--acid-green)] font-mono font-bold text-xs uppercase">// Side A: Playlist</h4>
+                         <button onclick="togglePlaylist()" class="text-white hover:text-red-500"><i data-lucide="x" class="w-4 h-4"></i></button>
                     </div>
-
-                    <!-- Buttons -->
-                    <div class="flex justify-between items-center px-2">
-                        <!-- Repeat Button -->
-                        <button onclick="toggleRepeat(this)" class="text-white/50 hover:text-white transition-colors" id="btn-repeat"><i data-lucide="repeat" class="w-5 h-5"></i></button>
-                        
-                        <div class="flex items-center gap-4">
-                            <!-- Prev -->
-                            <button onclick="prevTrack()" class="text-white hover:text-[var(--acid-green)] transition-colors active:scale-90"><i data-lucide="skip-back" class="w-8 h-8 fill-current"></i></button>
-                            
-                            <!-- Play/Pause -->
-                            <button onclick="toggleMusic()" class="bg-white text-black w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 hover:bg-[var(--neon-pink)] hover:text-white transition-all shadow-[0_0_15px_rgba(255,255,255,0.5)] active:scale-95">
-                                <span id="icon-play"><i data-lucide="play" class="w-6 h-6 fill-current ml-1"></i></span>
-                                <span id="icon-pause" class="hidden"><i data-lucide="pause" class="w-6 h-6 fill-current"></i></span>
-                            </button>
-                            
-                            <!-- Next -->
-                            <button onclick="nextTrack()" class="text-white hover:text-[var(--acid-green)] transition-colors active:scale-90"><i data-lucide="skip-forward" class="w-8 h-8 fill-current"></i></button>
-                        </div>
-                        
-                        <!-- Playlist Toggle Button -->
-                        <button onclick="togglePlaylist()" class="text-white/50 hover:text-[var(--acid-green)] transition-colors relative" id="btn-playlist">
-                            <i data-lucide="list-music" class="w-5 h-5"></i>
-                        </button>
+                    <div id="playlist-tracks" class="flex flex-col gap-1 text-white font-mono text-xs pb-10">
+                        <!-- Tracks injected by JS -->
                     </div>
                 </div>
             </div>
 
-            <!-- Tall Photo -->
-            <div class="md:col-span-1 md:row-span-2 brutal-card rounded-2xl p-0 h-64 md:h-full">
-                <div class="flip-container h-full w-full" onclick="this.classList.toggle('flipped')">
-                    <div class="flip-inner h-full w-full">
-                        <!-- Front: Image 1 & 3 Slideshow -->
-                        <div class="flip-front relative">
-                            <!-- Base Image (Image 1) -->
-                            <img src="Gemini_Generated_Image_1.png" class="w-full h-full object-cover absolute inset-0" alt="Sister Photo 1">
-                            <!-- Overlay Image (Image 3) with fade animation -->
-                            <img src="Gemini_Generated_Image_3.png" class="w-full h-full object-cover absolute inset-0" style="animation: simple-fade 4s infinite;" alt="Sister Photo 3">
-                            
-                            <div class="absolute bottom-4 left-0 w-full text-center z-10">
-                                <span class="bg-[var(--acid-green)] text-black px-2 border border-black font-bold text-xs transform -rotate-3 inline-block">TAP TO FLIP ➜</span>
-                            </div>
-                        </div>
-                        <!-- Back: Image 2 (Image 4) -->
-                        <div class="flip-back p-0">
-                            <img src="Gemini_Generated_Image_4.png" class="w-full h-full object-cover" alt="Sister Photo 2">
-                        </div>
+            <!-- Tall Photo (Slideshow Only) -->
+            <div class="md:col-span-1 md:row-span-2 brutal-card rounded-2xl p-0 h-64 md:h-full relative overflow-hidden">
+                <div class="w-full h-full relative">
+                    <!-- Base Image (Image 1) -->
+                    <img src="Gemini_Generated_Image_1.png" class="w-full h-full object-cover absolute inset-0" alt="Sister Photo 1">
+                    <!-- Overlay Image (Image 4) with fade animation -->
+                    <img src="Gemini_Generated_Image_4.png" class="w-full h-full object-cover absolute inset-0" style="animation: simple-fade 4s infinite;" alt="Sister Photo 4">
+                    
+                    <div class="absolute bottom-4 left-0 w-full text-center z-10">
+                        <span class="bg-[var(--acid-green)] text-black px-2 border border-black font-bold text-xs transform -rotate-3 inline-block">ICONIC ✨</span>
                     </div>
                 </div>
             </div>
@@ -563,7 +575,7 @@
         </div>
     </section>
 
-    <!-- NEW SECTION: REELS VIDEO PLAYER -->
+    <!-- REELS VIDEO PLAYER -->
     <section id="reels" class="py-20 bg-[var(--soft-cream)] relative border-b-4 border-[var(--text-main)]">
         <div class="max-w-md mx-auto px-4">
             <h2 class="text-4xl font-black mb-8 text-center text-[var(--text-main)] uppercase tracking-tighter">HIGHLIGHT <span class="text-[var(--neon-pink)]">REEL</span> 🎥</h2>
@@ -913,33 +925,26 @@
         // Initialize Icons
         lucide.createIcons();
         
-        // --- NEW: Theme Switcher Logic (Missing in previous context) ---
-        const themes = [null, 'dark', 'retro']; // null is default
-        let currentThemeIndex = 0;
+        // --- 1. Global Variables & DOM Elements ---
+        let audio, iconPlay, iconPause, disc, progressBar, progressContainer, currTimeDisplay, durTimeDisplay, playlistContainer, playlistOverlay, marqueeText;
+        let videoElement, videoOverlay, videoContainer, videoProgress, videoScrubber, volIcon, heartAnim, likeCount;
+        let slot1, slot2, slot3, resultDisplay, spinBtnSlot, spinIcon;
+        let tttBoard, tttStatus, tttOverlay, tttWinnerText;
+        let modal, modalContent, typewriterBody;
+        let audioCtx;
+        let spoolElems, tapeBtnElems;
+        
+        // --- 2. State & Data ---
+        let currentTrackIndex = 0;
+        let isRepeat = false;
+        let isShuffle = false;
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let favorites = [];
+        let isSpinning = false;
+        let miniBars, podVisualizer;
 
-        function switchTheme() {
-            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-            const theme = themes[currentThemeIndex];
-            if (theme) {
-                document.documentElement.setAttribute('data-theme', theme);
-            } else {
-                document.documentElement.removeAttribute('data-theme');
-            }
-            if (typeof confetti === 'function') triggerConfetti();
-        }
-
-        // --- NEW: Level 17 Theme Toggle ---
-        function toggleLevel17Theme() {
-            const html = document.documentElement;
-            if (html.getAttribute('data-theme') === 'level17') {
-                html.removeAttribute('data-theme');
-            } else {
-                html.setAttribute('data-theme', 'level17');
-                triggerConfetti(); 
-            }
-        }
-
-        // --- ENHANCED AUDIO PLAYER LOGIC ---
         const songs = [
             { title: "Pal Pal Dil Ke Paas", artist: "Arijit Singh", src: "pal-pal_song.mp3" },
             { title: "Attention", artist: "Charlie Puth", src: "Charlie Puth - Attention (Lyrics).mp3" },
@@ -947,39 +952,52 @@
             { title: "MAURYA", artist: "artcriminal ft. Mitika", src: "artcriminal - MAURYA (feat. Mitika Kanwar).mp3" },
             { title: "Avisei", artist: "Rolly Bzy", src: "rolly-bzy-avisei_produzido-na-sons-a.mp3" }
         ];
+        
+        const aesthetics = ["Kurta & Sneakers 👟", "SoBo Aesthetic 💅", "Sarojini Slayer 🛍️", "Poo Bani Parvati 🎬", "Saree Not Sorry 🥻", "Desi Dark Academia 🕯️", "Band Baaja Ready 🎺"];
+        const eras = ["Delulu is Solulu 🦄", "Nazar Na Lage 🧿", "Goa Plan (Cancelled) 🏖️", "Academic Victim 📚", "Rishta Mode 💍", "Shark Tank Pitch 🦈", "Healing Era 🧘‍♀️"];
+        const powerups = ["Adrak Chai ☕", "Theekha Golgappa 🤤", "Momos w/ Chutney 🥟", "Auto Ride 🛺", "Biryani Bucket 🍗", "Unlimited Data 📱", "Jhumka Drop ✨"];
 
-        let currentTrackIndex = 0;
-        let isRepeat = false;
+        const letterText = "Happy 17th Birthday Aditi! 🎉\n\nJust wanted to pause the chaos for a sec to say I'm actually really proud of the person you're becoming. You're funny, smart, and only slightly annoying (sometimes).\n\nI hope your 17th year is filled with amazing moments, lots of laughter, and dreams coming true. Shine on!";
 
-        const audio = document.getElementById('birthday-audio');
-        const iconPlay = document.getElementById('icon-play');
-        const iconPause = document.getElementById('icon-pause');
-        const disc = document.getElementById('music-disc');
-        const equalizerBars = document.querySelectorAll('.equalizer-bar');
-        const progressBar = document.getElementById('progress-bar');
-        const progressContainer = document.getElementById('progress-container');
-        const currTimeDisplay = document.getElementById('curr-time');
-        const durTimeDisplay = document.getElementById('dur-time');
-        const playlistContainer = document.getElementById('playlist-tracks');
-        const playlistOverlay = document.getElementById('playlist-view');
-        const marqueeText = document.getElementById('player-marquee');
+        // --- 3. Logic Functions ---
 
-        // Video elements for pausing
-        const videoElement = document.getElementById('memory-video');
-        const videoOverlay = document.getElementById('video-play-overlay');
-        const videoContainer = document.getElementById('video-card-container');
-        const videoProgress = document.getElementById('video-progress');
-        const videoScrubber = document.getElementById('video-scrubber-area');
-        const volIcon = document.getElementById('vol-icon');
-        const heartAnim = document.getElementById('double-tap-heart');
-        const likeCount = document.getElementById('like-count');
+        function playTick() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = 800; 
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        const themes = [null, 'dark', 'retro'];
+        let currentThemeIndex = 0;
+
+        function switchTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const theme = themes[currentThemeIndex];
+            if (theme) document.documentElement.setAttribute('data-theme', theme);
+            else document.documentElement.removeAttribute('data-theme');
+            if (typeof confetti === 'function') triggerConfetti();
+        }
+
+        function toggleLevel17Theme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'level17') html.removeAttribute('data-theme');
+            else { html.setAttribute('data-theme', 'level17'); triggerConfetti(); }
+        }
 
         function initPlayer() {
             if (playlistContainer) {
                 playlistContainer.innerHTML = songs.map((song, index) => `
                     <div class="track-item p-2 rounded flex justify-between items-center border-b border-white/5 ${index === currentTrackIndex ? 'active' : ''}" onclick="loadTrack(${index})">
                         <div class="flex flex-col w-3/4">
-                            <span class="truncate font-bold">${index + 1}. ${song.title}</span>
+                            <span class="truncate font-bold text-xs">${index + 1}. ${song.title}</span>
                             <span class="text-[10px] opacity-50 truncate">${song.artist}</span>
                         </div>
                         <i data-lucide="play-circle" class="w-4 h-4 opacity-50"></i>
@@ -987,13 +1005,15 @@
                 `).join('');
                 lucide.createIcons();
             }
-            audio.src = songs[currentTrackIndex].src;
-            updateMarquee();
+            if(audio) {
+                 audio.src = songs[currentTrackIndex].src;
+                 updateMarquee();
+            }
         }
 
         function loadTrack(index) {
             currentTrackIndex = index;
-            audio.src = songs[currentTrackIndex].src;
+            if(audio) audio.src = songs[currentTrackIndex].src;
             if (playlistContainer) {
                 document.querySelectorAll('.track-item').forEach((item, i) => {
                     if (i === index) item.classList.add('active');
@@ -1002,39 +1022,54 @@
             }
             updateMarquee();
             playAudio();
-            if(window.innerWidth < 768 && playlistOverlay.classList.contains('active')) {
-                togglePlaylist();
-            }
+            if(window.innerWidth < 768 && playlistOverlay && playlistOverlay.classList.contains('active')) togglePlaylist();
         }
 
         function toggleMusic() {
-            if (audio.paused) playAudio();
+            if (audio && audio.paused) playAudio();
             else pauseAudio();
         }
 
         function playAudio() {
-            if (videoElement && !videoElement.paused) {
-                 videoElement.pause();
-                 if(videoOverlay) videoOverlay.classList.remove('opacity-0');
+            if (typeof toggleVideoState === 'function' && videoElement && !videoElement.paused) {
+                 toggleVideoState();
             }
+
             audio.play().then(() => {
-                iconPlay.classList.add('hidden');
-                iconPause.classList.remove('hidden');
-                disc.classList.add('playing');
-                equalizerBars.forEach(bar => bar.classList.add('playing'));
+                const iconPlay = document.getElementById('icon-play');
+                const iconPause = document.getElementById('icon-pause');
+                const disc = document.getElementById('music-disc');
+                
+                if(iconPlay) iconPlay.classList.add('hidden');
+                if(iconPause) iconPause.classList.remove('hidden');
+                
+                // Animate spools
+                if(spoolElems) spoolElems.forEach(s => s.classList.add('playing'));
             }).catch(e => console.log("Audio play error:", e));
         }
 
         function pauseAudio() {
-            audio.pause();
-            iconPlay.classList.remove('hidden');
-            iconPause.classList.add('hidden');
-            disc.classList.remove('playing');
-            equalizerBars.forEach(bar => bar.classList.remove('playing'));
+            if(audio) audio.pause();
+            const iconPlay = document.getElementById('icon-play');
+            const iconPause = document.getElementById('icon-pause');
+            
+            if(iconPlay) iconPlay.classList.remove('hidden');
+            if(iconPause) iconPause.classList.add('hidden');
+            
+            // Stop spools
+            if(spoolElems) spoolElems.forEach(s => s.classList.remove('playing'));
         }
 
         function nextTrack() {
-            currentTrackIndex = (currentTrackIndex + 1) % songs.length;
+            if(isShuffle) {
+                let nextIndex = Math.floor(Math.random() * songs.length);
+                while(nextIndex === currentTrackIndex && songs.length > 1) {
+                    nextIndex = Math.floor(Math.random() * songs.length);
+                }
+                currentTrackIndex = nextIndex;
+            } else {
+                currentTrackIndex = (currentTrackIndex + 1) % songs.length;
+            }
             loadTrack(currentTrackIndex);
         }
 
@@ -1045,54 +1080,42 @@
 
         function toggleRepeat(btn) {
             isRepeat = !isRepeat;
-            btn.style.color = isRepeat ? '#39ff14' : 'rgba(255,255,255,0.5)';
-            audio.loop = isRepeat;
+            if(audio) audio.loop = isRepeat;
+            btn.style.color = isRepeat ? '#39ff14' : '#666';
+        }
+        
+        function toggleShuffle(btn) {
+            isShuffle = !isShuffle;
+            btn.style.color = isShuffle ? '#39ff14' : 'rgba(255,255,255,0.4)';
+        }
+        
+        function toggleFavorite(btn) {
+            if(favorites.includes(currentTrackIndex)) {
+                favorites = favorites.filter(i => i !== currentTrackIndex);
+                btn.innerHTML = '<i data-lucide="heart" class="w-3 h-3"></i>';
+            } else {
+                favorites.push(currentTrackIndex);
+                btn.innerHTML = '<i data-lucide="heart" class="w-3 h-3 fill-[var(--neon-pink)] text-[var(--neon-pink)]"></i>';
+                const heart = btn.querySelector('svg');
+                if(heart) {
+                    heart.classList.add('animate-ping');
+                    setTimeout(() => heart.classList.remove('animate-ping'), 500);
+                }
+            }
+            lucide.createIcons();
+        }
+        
+        function setVolume(val) {
+            if(audio) audio.volume = val;
         }
 
         function togglePlaylist() {
-            if(playlistOverlay) {
-                playlistOverlay.classList.toggle('active');
-                const btn = document.getElementById('btn-playlist');
-                if(btn) {
-                    if(playlistOverlay.classList.contains('active')) {
-                        btn.classList.add('text-[var(--acid-green)]');
-                        btn.classList.remove('text-white/50');
-                    } else {
-                        btn.classList.remove('text-[var(--acid-green)]');
-                        btn.classList.add('text-white/50');
-                    }
-                }
-            }
+            if(playlistOverlay) playlistOverlay.classList.toggle('active');
         }
 
         function updateMarquee() {
             const song = songs[currentTrackIndex];
-            if(marqueeText) {
-                marqueeText.innerText = `NOW PLAYING: ${song.title.toUpperCase()} - ${song.artist.toUpperCase()} • ADITI'S MIX VOL. 17 • `;
-            }
-        }
-
-        audio.addEventListener('timeupdate', (e) => {
-            const { duration, currentTime } = e.srcElement;
-            const progressPercent = (currentTime / duration) * 100;
-            if(progressBar) progressBar.style.width = `${progressPercent}%`;
-            if (duration) {
-                if(currTimeDisplay) currTimeDisplay.innerText = formatTime(currentTime);
-                if(durTimeDisplay) durTimeDisplay.innerText = formatTime(duration);
-            }
-        });
-
-        audio.addEventListener('ended', () => {
-            if(!isRepeat) nextTrack();
-        });
-        
-        if(progressContainer) {
-            progressContainer.addEventListener('click', (e) => {
-                const width = progressContainer.clientWidth;
-                const clickX = e.offsetX;
-                const duration = audio.duration;
-                audio.currentTime = (clickX / width) * duration;
-            });
+            if(marqueeText) marqueeText.innerText = `${song.title} - ${song.artist} 📼`;
         }
 
         function formatTime(time) {
@@ -1104,56 +1127,30 @@
         
         // --- Video Player Logic ---
         function toggleVideoState() {
+            if(!videoElement) return;
             if (videoElement.paused) {
                 if (audio && !audio.paused) toggleMusic();
                 videoElement.play();
-                videoOverlay.classList.add('opacity-0');
+                if(videoOverlay) videoOverlay.classList.add('opacity-0');
             } else {
                 videoElement.pause();
-                videoOverlay.classList.remove('opacity-0');
+                if(videoOverlay) videoOverlay.classList.remove('opacity-0');
             }
         }
-
-        videoContainer.addEventListener('click', (e) => {
-            if(e.target.closest('button') || e.target.closest('#video-scrubber-area')) return;
-            toggleVideoState();
-        });
-
-        videoContainer.addEventListener('dblclick', (e) => {
-            heartAnim.classList.remove('animate-like');
-            void heartAnim.offsetWidth; 
-            heartAnim.classList.add('animate-like');
-            let likes = parseInt(likeCount.innerText.replace('k', ''));
-            if(!likeCount.getAttribute('data-liked')) {
-                likeCount.innerText = "17.1k"; 
-                likeCount.setAttribute('data-liked', 'true');
-            }
-        });
-
-        videoElement.addEventListener('timeupdate', () => {
-            const percent = (videoElement.currentTime / videoElement.duration) * 100;
-            videoProgress.style.width = `${percent}%`;
-        });
-
-        videoScrubber.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            const rect = videoScrubber.getBoundingClientRect();
-            const pos = (e.clientX - rect.left) / rect.width;
-            videoElement.currentTime = pos * videoElement.duration;
-        });
-
+        
         function toggleMute(e) {
             if(e) e.stopPropagation();
+            if(!videoElement) return;
             videoElement.muted = !videoElement.muted;
             if (videoElement.muted) {
-                volIcon.setAttribute('data-lucide', 'volume-x');
+                if(volIcon) volIcon.setAttribute('data-lucide', 'volume-x');
             } else {
-                volIcon.setAttribute('data-lucide', 'volume-2');
+                if(volIcon) volIcon.setAttribute('data-lucide', 'volume-2');
             }
             lucide.createIcons();
         }
 
-        // --- NEW: Slay Report Logic ---
+        // --- Slay Report Logic ---
         function toggleSlayItem(element, emoji) {
             if (element.classList.contains('checked')) return; 
             element.classList.add('checked');
@@ -1162,6 +1159,7 @@
                 badge.innerText = "VERIFIED";
                 badge.classList.remove('bg-gray-200', 'text-gray-500');
             }
+            if(typeof playTick === 'function') playTick();
             updateSlayProgress();
         }
 
@@ -1183,23 +1181,9 @@
             }
         }
 
-        // --- NEW: Desi Vibe Machine Logic (Restored) ---
-        const aesthetics = ["Kurta & Sneakers 👟", "SoBo Aesthetic 💅", "Sarojini Slayer 🛍️", "Poo Bani Parvati 🎬", "Saree Not Sorry 🥻", "Desi Dark Academia 🕯️", "Band Baaja Ready 🎺"];
-        const eras = ["Delulu is Solulu 🦄", "Nazar Na Lage 🧿", "Goa Plan (Cancelled) 🏖️", "Academic Victim 📚", "Rishta Mode 💍", "Shark Tank Pitch 🦈", "Healing Era 🧘‍♀️"];
-        const powerups = ["Adrak Chai ☕", "Theekha Golgappa 🤤", "Momos w/ Chutney 🥟", "Auto Ride 🛺", "Biryani Bucket 🍗", "Unlimited Data 📱", "Jhumka Drop ✨"];
-
-        const slot1 = document.getElementById('slot-1');
-        const slot2 = document.getElementById('slot-2');
-        const slot3 = document.getElementById('slot-3');
-        const resultDisplay = document.getElementById('slot-result');
-        const spinBtn = document.getElementById('spin-btn');
-        const spinIcon = document.getElementById('spin-icon');
-
-        renderSlot(slot1, aesthetics);
-        renderSlot(slot2, eras);
-        renderSlot(slot3, powerups);
-
+        // --- Desi Vibe Machine Logic ---
         function renderSlot(element, items) {
+            if(!element) return;
             const repeated = [...items, ...items, ...items, ...items]; 
             element.innerHTML = repeated.map(item => `
                 <div class="slot-item h-32 md:h-48 flex items-center justify-center text-center p-2 w-full">
@@ -1208,11 +1192,12 @@
             `).join('');
         }
 
-        let isSpinning = false;
         function spinSlots() {
             if(isSpinning) return;
             isSpinning = true;
-            spinBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            if(typeof playTick === 'function') playTick();
+            
+            spinBtnSlot.classList.add('opacity-50', 'cursor-not-allowed');
             spinIcon.classList.add('animate-spin');
             resultDisplay.style.opacity = '0';
             const stopIndex1 = Math.floor(Math.random() * aesthetics.length) + aesthetics.length; 
@@ -1223,7 +1208,7 @@
             animateStrip(slot2, stopIndex2, itemHeight, 1500);
             animateStrip(slot3, stopIndex3, itemHeight, 2000, () => {
                 isSpinning = false;
-                spinBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                spinBtnSlot.classList.remove('opacity-50', 'cursor-not-allowed');
                 spinIcon.classList.remove('animate-spin');
                 const res1 = aesthetics[stopIndex1 % aesthetics.length];
                 const res2 = eras[stopIndex2 % eras.length];
@@ -1235,6 +1220,7 @@
         }
 
         function animateStrip(element, stopIndex, height, duration, callback) {
+            if(!element) return;
             element.style.transition = 'none';
             element.style.transform = 'translateY(0)';
             element.offsetHeight;
@@ -1243,15 +1229,7 @@
             if (callback) setTimeout(callback, duration);
         }
 
-        // --- NEW: Tic-Tac-Toe Logic ---
-        let board = ['', '', '', '', '', '', '', '', ''];
-        let currentPlayer = 'X';
-        let gameActive = true;
-        const tttBoard = document.getElementById('ttt-board');
-        const tttStatus = document.getElementById('ttt-status');
-        const tttOverlay = document.getElementById('ttt-overlay');
-        const tttWinnerText = document.getElementById('ttt-winner-text');
-
+        // --- Tic-Tac-Toe Logic ---
         function initGame() {
             if(!tttBoard) return;
             tttBoard.innerHTML = '';
@@ -1279,6 +1257,7 @@
             board[clickedCellIndex] = currentPlayer;
             clickedCell.innerText = currentPlayer;
             clickedCell.classList.add(currentPlayer.toLowerCase());
+            if(typeof playTick === 'function') playTick();
         }
 
         function handleResultValidation() {
@@ -1322,21 +1301,13 @@
             initGame();
         }
 
-        // Initialize TicTacToe when game loads
-        document.addEventListener('DOMContentLoaded', () => {
-            // Need to wait slightly for DOM in some environments or check immediately
-            if(document.getElementById('ttt-board')) initGame();
-        });
-
-        // --- NEW: E-CARD & TYPEWRITER LOGIC ---
-        // Date Badge Typewriter
+        // --- E-CARD & TYPEWRITER LOGIC ---
         function startDataBadgeTypewriter() {
             const text = "3 FEB"; 
             const element = document.getElementById('date-typewriter');
             if(!element) return;
             let i = 0;
             element.innerHTML = "";
-            
             function type() {
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
@@ -1347,141 +1318,71 @@
             setTimeout(type, 1500); 
         }
 
-        // Modal Logic
-        const modal = document.getElementById('letter-modal');
-        const modalContent = document.getElementById('letter-content-box');
-        const typewriterBody = document.getElementById('typewriter-body');
-        const letterText = "Happy 17th Birthday Aditi! 🎉\n\nJust wanted to pause the chaos for a sec to say I'm actually really proud of the person you're becoming. You're funny, smart, and only slightly annoying (sometimes).\n\nI hope your 17th year is filled with amazing moments, lots of laughter, and dreams coming true. Shine on!";
-
         function openLetterModal() {
-            modal.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-90');
-                modalContent.classList.add('scale-100');
-            });
-            
-            triggerConfetti();
-            createBalloons();
-            startLetterTypewriter();
+            if(modal) {
+                modal.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    modal.classList.remove('opacity-0');
+                    modalContent.classList.remove('scale-90');
+                    modalContent.classList.add('scale-100');
+                });
+                triggerConfetti();
+                createBalloons();
+                startLetterTypewriter();
+            }
         }
 
         function closeLetterModal() {
-            modal.classList.add('opacity-0');
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-90');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            if(modal) {
+                modal.classList.add('opacity-0');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-90');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
         }
 
         function startLetterTypewriter() {
-            typewriterBody.innerHTML = ""; 
-            let i = 0;
-            
-            function typeLetter() {
-                if (i < letterText.length) {
-                    const char = letterText.charAt(i);
-                    if (char === '\n') {
-                        typewriterBody.innerHTML += '<br>';
-                    } else {
-                        typewriterBody.innerHTML += char;
-                    }
-                    i++;
-                    const speed = Math.random() * 30 + 30; 
-                    
-                    if(!modal.classList.contains('hidden')) {
-                        setTimeout(typeLetter, speed);
+            if(typewriterBody) {
+                typewriterBody.innerHTML = ""; 
+                let i = 0;
+                function typeLetter() {
+                    if (i < letterText.length) {
+                        const char = letterText.charAt(i);
+                        if (char === '\n') {
+                            typewriterBody.innerHTML += '<br>';
+                        } else {
+                            typewriterBody.innerHTML += char;
+                        }
+                        i++;
+                        const speed = Math.random() * 30 + 30; 
+                        if(!modal.classList.contains('hidden')) {
+                            setTimeout(typeLetter, speed);
+                        }
                     }
                 }
+                setTimeout(typeLetter, 500);
             }
-            setTimeout(typeLetter, 500);
         }
 
-        // --- Video Intro Logic ---
-        window.onload = function() {
-            lucide.createIcons();
-            initPlayer();
-            initGame();
-
-            // Trigger Date Badge Typewriter
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        startDataBadgeTypewriter();
-                        observer.disconnect(); 
-                    }
-                });
-            });
-            const msgSection = document.getElementById('message');
-            if(msgSection) observer.observe(msgSection); 
-
-            const startBtn = document.getElementById('enter-party-btn'); 
-            const introOverlay = document.getElementById('video-intro-overlay');
-            const video = document.getElementById('intro-video');
-            const body = document.getElementById('body');
-
-            startBtn.addEventListener('click', function() {
-                introOverlay.classList.add('slide-up');
-                body.classList.remove('overflow-hidden');
-
-                setTimeout(() => {
-                    triggerConfetti();
-                    createBalloons();
-                    activateRaveMode();
-                    body.classList.add('shake-screen');
-                    setTimeout(() => body.classList.remove('shake-screen'), 500);
-                    
-                    if(video) video.pause();
-                    setTimeout(() => introOverlay.remove(), 1000);
-                }, 500);
-
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const warmUp = new SpeechSynthesisUtterance('ready');
-                    warmUp.volume = 0; 
-                    window.speechSynthesis.speak(warmUp);
-                }
-            });
-            
-            let titleIndex = 0;
-            const titles = ["HBD SIS - 17", "QUEEN B-DAY 👑", "LEVEL 17 🔓", "PARTY MODE ON 🎉"];
-            setInterval(() => {
-                document.title = titles[titleIndex];
-                titleIndex = (titleIndex + 1) % titles.length;
-            }, 2000);
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if(menu) menu.classList.toggle('open');
         }
 
-        // --- Hype Meter ---
-        let hypeCount = 0;
-        const hypeEmojis = ['🔥', '💖', '💅', '👑', '🎉', '🆒'];
-        
-        function addHype(event) {
-            hypeCount++;
-            document.getElementById('hype-count').innerText = hypeCount;
-            const btn = event.currentTarget;
-            const particle = document.createElement('div');
-            particle.className = 'hype-particle';
-            particle.innerText = hypeEmojis[Math.floor(Math.random() * hypeEmojis.length)];
-            const rect = btn.getBoundingClientRect();
-            particle.style.left = (rect.left + rect.width / 2) + 'px';
-            particle.style.top = (rect.top) + 'px';
-            document.body.appendChild(particle);
-            setTimeout(() => particle.remove(), 1000);
-        }
-
-        // --- INTERACTIVE: Title Scramble ---
         function scrambleTitle() {
             const title = document.getElementById('main-title');
-            title.style.fontFamily = "monospace";
-            title.style.color = "var(--neon-pink)";
-            setTimeout(() => {
-                title.style.fontFamily = "'Syne', sans-serif";
-                title.style.color = "";
-            }, 300);
+            if(title) {
+                title.style.fontFamily = "monospace";
+                title.style.color = "var(--neon-pink)";
+                setTimeout(() => {
+                    title.style.fontFamily = "'Syne', sans-serif";
+                    title.style.color = "";
+                }, 300);
+            }
         }
 
-        // --- Confetti Function ---
         function triggerConfetti() {
             if (typeof confetti !== 'function') return;
             var duration = 3 * 1000;
@@ -1496,8 +1397,7 @@
             confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
         }
-        
-        // --- Balloon Generator ---
+
         function createBalloons() {
             const emojis = ["🎈", "17", "👑", "💅", "🎂", "✨"];
             const container = document.body;
@@ -1513,7 +1413,6 @@
             }
         }
 
-        // --- Rave Mode ---
         function activateRaveMode() {
             let cycles = 0;
             const maxCycles = 15;
@@ -1527,9 +1426,169 @@
             }, 200);
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('open');
+        // --- Window Load ---
+        window.onload = function() {
+            lucide.createIcons();
+            
+            // Assign Global DOM Elements
+            audio = document.getElementById('birthday-audio');
+            progressBar = document.getElementById('progress-bar');
+            progressContainer = document.getElementById('progress-container');
+            durTimeDisplay = document.getElementById('dur-time');
+            currTimeDisplay = document.getElementById('curr-time');
+            playlistContainer = document.getElementById('playlist-tracks');
+            playlistOverlay = document.getElementById('playlist-view');
+            marqueeText = document.getElementById('player-marquee');
+            
+            // Cassette specific elements
+            spoolElems = document.querySelectorAll('.spool');
+            iconPlay = document.getElementById('icon-play');
+            iconPause = document.getElementById('icon-pause');
+
+            // Video
+            videoElement = document.getElementById('memory-video');
+            videoOverlay = document.getElementById('video-play-overlay');
+            videoContainer = document.getElementById('video-card-container');
+            videoProgress = document.getElementById('video-progress');
+            videoScrubber = document.getElementById('video-scrubber-area');
+            volIcon = document.getElementById('vol-icon');
+            heartAnim = document.getElementById('double-tap-heart');
+            likeCount = document.getElementById('like-count');
+
+            // Slot Machine
+            slot1 = document.getElementById('slot-1');
+            slot2 = document.getElementById('slot-2');
+            slot3 = document.getElementById('slot-3');
+            resultDisplay = document.getElementById('slot-result');
+            spinBtnSlot = document.getElementById('spin-btn');
+            spinIcon = document.getElementById('spin-icon');
+            
+            // Tic Tac Toe
+            tttBoard = document.getElementById('ttt-board');
+            tttStatus = document.getElementById('ttt-status');
+            tttOverlay = document.getElementById('ttt-overlay');
+            tttWinnerText = document.getElementById('ttt-winner-text');
+            
+            // Letter Modal
+            modal = document.getElementById('letter-modal');
+            modalContent = document.getElementById('letter-content-box');
+            typewriterBody = document.getElementById('typewriter-body');
+
+            // Initialize Components
+            initPlayer();
+            initGame();
+            renderSlot(slot1, aesthetics);
+            renderSlot(slot2, eras);
+            renderSlot(slot3, powerups);
+            
+            // Audio Event Listeners (assigned after DOM load)
+            if(audio) {
+                audio.addEventListener('timeupdate', (e) => {
+                    const { duration, currentTime } = e.srcElement;
+                    const progressPercent = (currentTime / duration) * 100;
+                    if(progressBar) progressBar.style.width = `${progressPercent}%`;
+                    if (duration) {
+                        if(currTimeDisplay) currTimeDisplay.innerText = formatTime(currentTime);
+                    }
+                });
+                audio.addEventListener('ended', () => { if(!isRepeat) nextTrack(); });
+            }
+
+            if(progressContainer) {
+                progressContainer.addEventListener('click', (e) => {
+                    const width = progressContainer.clientWidth;
+                    const clickX = e.offsetX;
+                    const duration = audio.duration;
+                    audio.currentTime = (clickX / width) * duration;
+                });
+            }
+
+            // Video Event Listeners
+             if(videoElement) {
+                videoContainer.addEventListener('click', (e) => {
+                    if(e.target.closest('button') || e.target.closest('#video-scrubber-area')) return;
+                    toggleVideoState();
+                });
+                videoContainer.addEventListener('dblclick', (e) => {
+                    heartAnim.classList.remove('animate-like');
+                    void heartAnim.offsetWidth; 
+                    heartAnim.classList.add('animate-like');
+                    let likes = parseInt(likeCount.innerText.replace('k', ''));
+                    if(!likeCount.getAttribute('data-liked')) {
+                        likeCount.innerText = "17.1k"; 
+                        likeCount.setAttribute('data-liked', 'true');
+                    }
+                });
+                videoElement.addEventListener('timeupdate', () => {
+                    const percent = (videoElement.currentTime / videoElement.duration) * 100;
+                    if(videoProgress) videoProgress.style.width = `${percent}%`;
+                });
+                if(videoScrubber) {
+                    videoScrubber.addEventListener('click', (e) => {
+                        e.stopPropagation(); 
+                        const rect = videoScrubber.getBoundingClientRect();
+                        const pos = (e.clientX - rect.left) / rect.width;
+                        videoElement.currentTime = pos * videoElement.duration;
+                    });
+                }
+             }
+
+            // Trigger Date Badge Typewriter
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        startDataBadgeTypewriter();
+                        observer.disconnect(); 
+                    }
+                });
+            });
+            const msgSection = document.getElementById('message');
+            if(msgSection) observer.observe(msgSection); 
+
+            const startBtn = document.getElementById('enter-party-btn'); 
+            const introOverlay = document.getElementById('video-intro-overlay');
+            const videoIntro = document.getElementById('intro-video');
+            const body = document.getElementById('body');
+
+            if(startBtn) {
+                startBtn.addEventListener('click', function() {
+                    // Initialize Audio Context on user click
+                    if (!audioCtx) {
+                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                    if (audioCtx.state === 'suspended') {
+                        audioCtx.resume();
+                    }
+
+                    introOverlay.classList.add('slide-up');
+                    body.classList.remove('overflow-hidden');
+
+                    setTimeout(() => {
+                        triggerConfetti();
+                        createBalloons();
+                        activateRaveMode();
+                        body.classList.add('shake-screen');
+                        setTimeout(() => body.classList.remove('shake-screen'), 500);
+                        
+                        if(videoIntro) videoIntro.pause();
+                        setTimeout(() => introOverlay.remove(), 1000);
+                    }, 500);
+
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const warmUp = new SpeechSynthesisUtterance('ready');
+                        warmUp.volume = 0; 
+                        window.speechSynthesis.speak(warmUp);
+                    }
+                });
+            }
+            
+            let titleIndex = 0;
+            const titles = ["HBD SIS - 17", "QUEEN B-DAY 👑", "LEVEL 17 🔓", "PARTY MODE ON 🎉"];
+            setInterval(() => {
+                document.title = titles[titleIndex];
+                titleIndex = (titleIndex + 1) % titles.length;
+            }, 2000);
         }
     </script>
 </body>
